@@ -5,12 +5,6 @@
   stconnect( );
   $user_id = fbconnect( );
 
-//  $appapikey = '103424ce8ec89f93620faeb04713764c';
-//  $appsecret = '6a1cc9469dec99e4e067876e56dbd473';
-//  $facebook = new Facebook($appapikey, $appsecret);
-//  $user_id = "123";
-//  $user_id = $facebook->require_login();
-
   if( isset( $_POST['authkey'] ) ) {
     $authkey = isset($_POST['authkey']) ? $_POST['authkey'] : "NULL";
     $displ = isset($_POST['Displ']) ? $_POST['Displ'] : "NULL";
