@@ -8,5 +8,5 @@ Some key files are currently omitted from this repository. Please contact me if 
 
 ### Design
 
-The ScoreTank UI is based on the Joomla template, favouritest (customized 'favourite' template).
-favouritest/index.php calls renderST in stlib.php to retrieve the title, menu and page contents for requested pages.
+* The ScoreTank UI is based on the Joomla template, favouritest (customized 'favourite' template).
+* favouritest/index.php calls renderST in stlib.php to retrieve the title, menu and page contents for requested pages.
