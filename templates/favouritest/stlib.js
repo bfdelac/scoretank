@@ -436,7 +436,7 @@ function SendMatchResLibX( ) {
 }
 
 window.XXfbAsyncInit = function( ) {
-  FB.init( { appId: '113970302173', //	'103424ce8ec89f93620faeb04713764c',
+  FB.init( { appId: '',
 			 cookie: true,
 			 status: true,
 			 xfbml: true,

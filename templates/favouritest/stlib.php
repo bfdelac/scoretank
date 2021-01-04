@@ -9,7 +9,7 @@ function href( $str ) {
   return( " href='index.php/" . $str . "'" );
 }
 
-function pagehead( $title ) {
+function pagehead( $title, $showjq = true ) {
   $path_parts = pathinfo( $_SERVER["PHP_SELF"] );
   //$linkbase = $path_parts['dirname'];
   $linkbase = preg_split( "/(\/index.php)/", $_SERVER["REQUEST_URI"] )[0];
@@ -30,14 +30,17 @@ function pagehead( $title ) {
 '<link href="' . $_SERVER["REQUEST_URI"] . '" rel="canonical" />' . "\n" .
 '<link href="' . $linkbase . '/templates/favouritest/favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />' . "\n" .
 '<link rel="stylesheet" href="' . $linkbase . '/media/jui/css/bootstrap.min.css" type="text/css"/>' . "\n" .
-'<link rel="stylesheet" href="' . $linkbase . '/media/jui/css/bootstrap-responsive.css" type="text/css"/>' . "\n" .
-'<script src="' . $linkbase . '/media/jui/js/jquery.min.js" type="text/javascript"></script>' . "\n" .
-'<script src="' . $linkbase . '/media/jui/js/jquery-noconflict.js" type="text/javascript"></script>' . "\n" .
-'<script src="' . $linkbase . '/media/jui/js/jquery-migrate.min.js" type="text/javascript"></script>' . "\n" .
-'<script src="' . $linkbase . '/media/system/js/caption.js" type="text/javascript"></script>' . "\n" .
-'<script src="' . $linkbase . '/media/jui/js/bootstrap.min.js" type="text/javascript"></script>' . "\n" .
-'<script type="text/javascript">' . "\n" .
-'jQuery(window).on(\'load\', function() { new JCaption(\'img.caption\');' . "\n" . '});' . "\n" . '</script>' . "\n";
+'<link rel="stylesheet" href="' . $linkbase . '/media/jui/css/bootstrap-responsive.css" type="text/css"/>' . "\n";
+if( $showjq ) {
+	$retval .=
+	'<script src="' . $linkbase . '/media/jui/js/jquery.min.js" type="text/javascript"></script>' . "\n" .
+	'<script src="' . $linkbase . '/media/jui/js/jquery-noconflict.js" type="text/javascript"></script>' . "\n" .
+	'<script src="' . $linkbase . '/media/jui/js/jquery-migrate.min.js" type="text/javascript"></script>' . "\n" .
+	'<script src="' . $linkbase . '/media/system/js/caption.js" type="text/javascript"></script>' . "\n" .
+	'<script src="' . $linkbase . '/media/jui/js/bootstrap.min.js" type="text/javascript"></script>' . "\n" .
+	'<script type="text/javascript">' . "\n" .
+	'jQuery(window).on(\'load\', function() { new JCaption(\'img.caption\');' . "\n" . '});' . "\n" . '</script>' . "\n";
+}
   return( $retval );
 
 }
@@ -845,11 +848,15 @@ function fixt( $ent = 0 ) {
   $retval = "";
 
   $scriptprefix = "";
-  if( strcasecmp( $_SERVER['SERVER_NAME'], 'www.thebrasstraps.com' ) == 0 ) {
+//   if( strcasecmp( $_SERVER['SERVER_NAME'], 'www.thebrasstraps.com' ) == 0 ) {
+//     $scriptprefix = "/scoretank";
+//   }
+  if( strstr( $_SERVER['SERVER_NAME'], 'thebrasstraps.com' ) ) {
     $scriptprefix = "/scoretank";
   }
 
   if( $ent > 0 ) {
+	$retval .= "<meta>" . $_SERVER['SERVER_NAME'] . "</meta>";
     $retval .= '<link type="text/css" href="' . $scriptprefix . '/jqlib/jquery-ui-1.8.11.custom/css/ui-lightness/jquery-ui-1.8.11.custom.css" rel="stylesheet"></script>' . "\n";
     $retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/jquery-1.5.2.js"></script>' . "\n";
     $retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/sarissa.js"></script>' . "\n";
@@ -1067,7 +1074,7 @@ function fixtentbypass( ) {
   $retval = "";
 
   $scriptprefix = "";
-  if( strcasecmp( $_SERVER['SERVER_NAME'], 'www.thebrasstraps.com' ) == 0 ) {
+  if( strstr( $_SERVER['SERVER_NAME'], 'thebrasstraps.com' ) ) {
     $scriptprefix = "/scoretank";
   }
 
@@ -1313,7 +1320,7 @@ function create( ) {
   $retval = "";
 
   $scriptprefix = "";
-  if( strcasecmp( $_SERVER['SERVER_NAME'], 'www.thebrasstraps.com' ) == 0 ) {
+  if( strstr( $_SERVER['SERVER_NAME'], 'thebrasstraps.com' ) ) {
     $scriptprefix = "/scoretank";
   }
 
@@ -1363,6 +1370,27 @@ function create( ) {
 			 '</div>';
 
   return array( $retval, "", $retmenu );
+}
+
+function getScriptPrefix( ) {
+	if( strstr( $_SERVER['SERVER_NAME'], 'thebrasstraps.com' ) ) {
+		return( "/scoretank" );
+	}
+}
+
+function reactable( ) {
+	$scriptprefix = "";
+	if( strstr( $_SERVER['SERVER_NAME'], 'thebrasstraps.com' ) ) {
+	  $scriptprefix = "/scoretank";
+	}
+	$retval = "";
+	$retval .= "<h1>Reactable from php</h1>";
+	$retval .= "<p>Test page</p>";
+	$retval .= "<div id='root'/>";
+	$retval .= '<script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>';
+	$retval .= '<script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>';
+	$retval .= '<script src="' . $scriptprefix . '/templates/favouritest/rtest_button.js"></script>';
+	return array( $retval, pagehead( "Reactable", false ), "" );
 }
 
 function stfbauth( ) {
@@ -1505,6 +1533,9 @@ function renderST( $inst ) {
   }
   if( $ArticleID == 14 ) {
     return( fixtentbypass( ) );
+  }
+  if( $ArticleID == 15 ) {
+	return( reactable( ) );
   }
   // $retval = "Hello World" . $ArticleID;
   // return( $retval );
