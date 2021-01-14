@@ -465,33 +465,6 @@ function myserror( $doc, $root, $query, $str, $mysqli ) {
 	    // 5. finals match
 //	    RollOverFMatch( $ROChKey, $stdb, $doc, $root, $ChKey, $sch );
 	  }
-if( 0 ) {
-	  $ROChKey = 88;
-	  $season = "Autumn 2013";
-
-	  //$ChKey = 90;
-	  $ChKey = RollOverCh( $ROChKey, $season, $fbid, $stdb, $doc, $root, $roteams );
-	  $Chnode = addChildNode( $doc, $root, "Championship" );
-	  addAttribute( $doc, $Chnode, "ChKey", $ChKey );
-	  $TeamArr = RollOverTeam( $ROChKey, $stdb, $doc, $root, $ChKey );
-if( 0 ) {
-$TeamArr = array( );
-$TeamArr[-1] = -1;
-$TeamArr[838] = 913;
-$TeamArr[839] = 914;
-$TeamArr[840] = 915;
-$TeamArr[841] = 916;
-$TeamArr[842] = 917;
-$TeamArr[843] = 918;
-$TeamArr[844] = 919;
-$TeamArr[845] = 920;
-$TeamArr[846] = 921;
-	  $sch = 371;
-}
-	  $sch = RollOverMatch( $ROChKey, $stdb, $doc, $root, $ChKey, $TeamArr, '2013-02-05' );
-	  //RollOverFRound( $ROChKey, $stdb, $doc, $root, $ChKey );
-	  //RollOverFMatch( $ROChKey, $stdb, $doc, $root, $ChKey, $sch );
-}
 	} else if( isset( $_REQUEST['genref'] ) ) {
 	  $mref = GenRef( $stdb, $doc, $root );
 	  $Chnode = addChildNode( $doc, $root, "ref", $mref[0] );

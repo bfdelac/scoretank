@@ -1,5 +1,8 @@
 <?php
 
+include __DIR__ . "/../fbcred.php";
+include __DIR__ . "/../stdbcred.php";
+
 function xmlentities( $string ) {
 	return str_replace( array ( '&', '"', "'", '<', '>', '\\' ),
 	                    array ( '&amp;' , '&quot;', '&apos;' , '&lt;' , '&gt;' , '\\\\' ), $string );
@@ -50,54 +53,16 @@ function FixtURL( ) {
 }
 
 function sticonnect( ) {
-  //$mysqli = new mysqli( "", "scoretank", "juOdfK", "stdb" );
-
-  //$mysqli = new mysqli( "", "thebrass_scoreta", "juOdfK16", "thebrass_stdb" );
-  //return( $mysqli );
   return(
-    mysqli_connect( "", "thebrass_scoreta", "juOdfK16", "thebrass_stdb" ) ); 
-}
-
-function xxxstconnect( ) {
-  mysql_connect( "", "thebrass_scoreta", "juOdfK16" );
-  mysql_select_db( "thebrass_stdb" );
-
-//  mysql_connect( "", "scoretank", "juOdfK" );
-//  mysql_select_db( "stdb" );
-}
-
-function old_fbconnect( ) {
-  $appapikey = '103424ce8ec89f93620faeb04713764c';
-  $appsecret = '6a1cc9469dec99e4e067876e56dbd473';
-  $facebook = new Facebook($appapikey, $appsecret);
-  $user_id = $facebook->require_login();
-  return( $user_id );
-}
-
-function getAppId( ) {
-  return( '113970302173' );
-}
-
-function getAppSecret( ) {
-  return( '6a1cc9469dec99e4e067876e56dbd473' );
-}
-
-function fbconnectX( $retjson = null ) {
-  $facebook = new Facebook(array(
-    'appId'  => '113970302173',
-    'secret' => '6a1cc9469dec99e4e067876e56dbd473',
-    'cookie' => true
-  ));
-
-  //$user = $facebook->getUser();
-  return( 0 );
+    mysqli_connect( "", stdb_username( ), stdb_password( ), stdb_dbname( ) ) ); 
 }
 
 function fbconnect( $retjson = null ) {
+  $fbappid = fbcred_get_app_id( );
+
   $facebook = new Facebook(array(
-//    'appId'  => '103424ce8ec89f93620faeb04713764c',
-    'appId'  => '113970302173',
-    'secret' => '6a1cc9469dec99e4e067876e56dbd473',
+    'appId'  => fbcred_get_app_id( ),
+    'secret' => fbcred_get_app_secret( ),
 //	'baseurl' => 'http://www.scoretank.com.au/fb/index.php',
 	'cookie' => true
   ));
@@ -107,30 +72,29 @@ function fbconnect( $retjson = null ) {
 
   if ($user) {
   //if( 0 ) {
-	try {
-	  // Proceed knowing you have a logged in user who's authenticated.
-	  $user_profile = $facebook->api('/me');
-	  //$user_profile = $facebook->api('/'.$facebook_uid);
-	  return( $user_profile["id"] );
-	} catch (FacebookApiException $e) {
-//echo '<h2>Error, user: ' . $user . '</h2>';
-	  return( $user );
-	  echo '<pre>'.htmlspecialchars(print_r($e, true)).'</pre>';
-	  $user = null;
-	}
+    try {
+      // Proceed knowing you have a logged in user who's authenticated.
+      $user_profile = $facebook->api('/me');
+      //$user_profile = $facebook->api('/'.$facebook_uid);
+      return( $user_profile["id"] );
+    } catch (FacebookApiException $e) {
+  //echo '<h2>Error, user: ' . $user . '</h2>';
+      return( $user );
+      echo '<pre>'.htmlspecialchars(print_r($e, true)).'</pre>';
+      $user = null;
+    }
   } else {
-	if( isset( $retjson ) ) {
-	  die( '{"error" : "ScoreTank error( DZ )"}' );
-	}
-	//die( '{"error" : "ScoreTank error( DZ )"}' );
+    if( isset( $retjson ) ) {
+      die( '{"error" : "ScoreTank error( DZ )"}' );
+    }
   }
   return( 0 );
 }
 
 function fbconnect5( &$fbcon = null ) {
   $fb = new Facebook\Facebook([
-    'app_id' => '113970302173',
-    'app_secret' => '6a1cc9469dec99e4e067876e56dbd473',
+    'app_id' => fbcred_get_app_id( ),
+    'app_secret' => fbcred_get_app_secret( ),
     'default_graph_version' => 'v2.5'
   ]);
 
@@ -138,16 +102,8 @@ function fbconnect5( &$fbcon = null ) {
     $fbcon = $fb;
   }
 
-//  $helper = $fb->getCanvasHelper();
   $helper = $fb->getPageTabHelper( );
 
-//$signedRequest = $helper->getSignedRequest();
-// if( $signedRequest ) {
-//   $payload = $signedRequest->getPayload();
-//   var_dump($payload);
-// } else {
-//   echo 'No SR<br/>';
-// }
   $accessToken = 0;
   try {
     $accessToken = $helper->getAccessToken();
@@ -174,37 +130,13 @@ function fbconnect5( &$fbcon = null ) {
     return( $_SESSION['fbSTUserId'] );
   }
 
-
-//  var_dump( $accessToken );
-//  if( $accessToken ) {
-//    $fb->setDefaultAccessToken( $accessToken );
-//  } else {
-//    $accessToken = $fb->getDefaultAccessToken( );
-//  }
-
-//  try {
-    // Returns a `Facebook\FacebookResponse` object
-    //$response = $fb->get('/me?fields=id,name', '{access-token}');
-//    $response = $fb->get('/me', $accessToken);
-//  } catch(Facebook\Exceptions\FacebookResponseException $e) {
-//    echo 'Graph returned an error (b): ' . $e->getMessage();
- //   exit;
-//  } catch(Facebook\Exceptions\FacebookSDKException $e) {
-//    echo 'Facebook SDK returned an error (b - ' . $accessToken . '): ' . $e->getMessage();
-//    exit;
-//  }
-//  $user = $response->getGraphUser();
-//  return( $user['id'] );
-//  if( $userId ) {
-//    return( $userId );
-//  }
   return( 0 );
 }
 
 function fbconnect5test( &$fbcon ) {
   $fb = new Facebook\Facebook([
-    'app_id' => '225024054285668',
-    'app_secret' => '44707eff3913341f4bda87d22d5791c9',
+    'app_id' => fbcred_get_test_app_id( ),
+    'app_secret' => fbcred_get_test_app_secret( ),
     'default_graph_version' => 'v2.5'
   ]);
 
@@ -242,8 +174,8 @@ function fbconnect5test( &$fbcon ) {
 
 function fbconnectDiag( ) {
   $facebook = new Facebook(array(
-    'appId'  => '103424ce8ec89f93620faeb04713764c',
-    'secret' => '6a1cc9469dec99e4e067876e56dbd473',
+    'appId'  => fbcred_get_long_app_id( ),
+    'secret' => fbcred_get_app_secret( ),
 	'cookie' => true
   ));
 

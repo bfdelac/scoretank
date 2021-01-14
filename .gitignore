@@ -1549,6 +1549,8 @@ fb/testfixt.php
 fb/testid.php
 fb/testid2.php
 fb/tests.php
+fb/fbcred.php
+templates/favouritest/fbcred.php
 jqlib/jquery-1.5.2.js
 jqlib/jquery-ui-1.8.11.custom/css/ui-lightness/images/ui-bg_diagonals-thick_18_b81900_40x40.png
 jqlib/jquery-ui-1.8.11.custom/css/ui-lightness/images/ui-bg_diagonals-thick_20_666666_40x40.png
@@ -7141,3 +7143,7 @@ fb/fbml/tests.php
 fb/fbml/testfeed.php
 fb/fbml/facebookapi_php5_restlib.php
 fb/facebookapi_php5_restlib.php
+fbcred.php
+.test.php.swp
+test.php
+stdbcred.php

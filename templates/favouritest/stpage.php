@@ -1,5 +1,8 @@
 <?php
 
+include __DIR__ . '/../../fbcred.php';
+include __DIR__ . '/../../stdbcred.php';
+
 function xmlentities( $string ) {
 	return str_replace( array ( '&', '"', "'", '<', '>', '\\' ),
 	                    array ( '&amp;' , '&quot;', '&apos;' , '&lt;' , '&gt;' , '\\\\' ), $string );
@@ -50,33 +53,13 @@ function FixtURL( ) {
 }
 
 function stconnect( ) {
-  //mysql_connect( "", "thebrass_scoreta", "juOdfK16" );
-  //mysql_select_db( "thebrass_stdb" );
-  return( mysqli_connect( "", "thebrass_scoreta", "juOdfK16", "thebrass_stdb" ) );
-}
-
-function get_app_id( ) {
-  return( '113970302173' );
-}
-
-//function get_app_secret( ) {
-//  return( '6a1cc9469dec99e4e067876e56dbd473' );
-//}
-
-function old_fbconnect( ) {
-  $appapikey = '103424ce8ec89f93620faeb04713764c';
-  $appsecret = '6a1cc9469dec99e4e067876e56dbd473';
-  $facebook = new Facebook($appapikey, $appsecret);
-  $user_id = $facebook->require_login();
-  return( $user_id );
+  return( mysqli_connect( "", stdb_username( ), stdb_password( ), stdb_dbname( ) ) );
 }
 
 function fbconnect( $retjson = null ) {
   $facebook = new Facebook(array(
-    //'appId'  => get_app_id( ), 		//'103424ce8ec89f93620faeb04713764c',
-    //'secret' => get_app_secret( ),	//'6a1cc9469dec99e4e067876e56dbd473',
-    'appId'  => '103424ce8ec89f93620faeb04713764c',
-    'secret' => '6a1cc9469dec99e4e067876e56dbd473',
+    'appId'  => fbcred_get_long_app_id( ),
+    'secret' => fbcred_get_app_secret( ),
 	'cookie' => true
   ));
 
@@ -104,8 +87,8 @@ function fbconnect( $retjson = null ) {
 
 function fbconnectDiag( ) {
   $facebook = new Facebook(array(
-    'appId'  => '103424ce8ec89f93620faeb04713764c',
-    'secret' => '6a1cc9469dec99e4e067876e56dbd473',
+    'appId'  => fbcred_get_long_app_id( ),
+    'secret' => fbcred_get_app_secret( ),
 	'cookie' => true
   ));
 

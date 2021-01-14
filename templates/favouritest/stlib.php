@@ -1,6 +1,6 @@
 <?php
 
-include 'stpage.php';
+include __DIR__ . 'stpage.php';
 
 function href( $str ) {
   if( strlen( $_SERVER['PATH_INFO'] ) > 1 ) {
@@ -54,7 +54,7 @@ function menuhead( ) {
 
 function menufoot( $script ) {
   $retmenu =  '</ul>' .	
-			  GetFBLink( $script ) .
+  			  add_login( ) .
 			 '</div>';
   return( $retmenu );
 }
@@ -68,41 +68,24 @@ function menuli( $inum, $active, $pageurl, $pagename, $submenu = null ) {
   return( $retmenu );
 }
 
-function GetFBLink( $script ) {
-  if( false ) {
-    if( ( $script == 'champ' ) ||
-      ( $script == '' ) ||
-      ( $script == 'fixt' ) ||
-	  ( $script == 'chinfo' ) ||
-	  ( $script == 'teamhist' ) ||
-	  ( $script == 'team' ) ) {
-	$title = "ScoreTank is also available as a Facebook application where you can view the same fixtures &amp; results.  Additional features based on the Facebook platform may become available.  ScoreTank stores the user IDs that correspond to various roles in the competition (eg admin, team member), but it will ask you first.  Privacy: ScoreTank will not divulge your user ID to any party, other than (with your approval) displaying your status as a team member, competition admin etc within the app.";
-    // $ChKey = JRequest::getVar( 'champ' );
-	return( '<span style="font-size:x-small;"><a title="' . $title . '" href="https://apps.facebook.com/scoretank/' . $script .
-			( ( $script != '' ) ? ".php?" : "" ) .
-			$_SERVER['QUERY_STRING'] . '" target="_blank"><img ' .
-				//	'src="http://static.ak.fbcdn.net/rsrc.php/z39E0/hash/ya8q506x.gif"' .
-					'src="images/stfbbadge.png"' .
-					' alt="" border="1"/><br/>view this page in Facebook</a></span>' );
-    }
+
+function add_login( ) {
+  if( !strstr( $_SERVER['SERVER_NAME'], 'thebrasstraps.com' ) ) {
+	return '';
   }
-  return;
+  if(!( $_SERVER["REQUEST_SCHEME"] == "https" )) {
+    return '';
+  }
+
+  return '<div id="loginbox"></div>';
 }
 
-
-//			   '<li id="item-101" class="current active"><a href="../index.php/welcome">Welcome</a></li>' .
-//			   '<li id="item-103"><a href="../index.php/about-scoretank">About ScoreTank</a></li>' .
-//			   '<li id="item-105"><a href="index.php/championship-list">Championship List</a></li>' .
-////			   '<li id="item-106"><a href="../index.php/champ">Championship</a></li>' .
-////			   '<li id="item-107"><a href="../index.php/fixture">Fixture</a></li>' .
-////			   '<li id="item-108" class="parent"><a href="../index.php/team">Team</a></li>' .
 function st_home( ) {
   $retval = "";
   $retval .= '<div class="item-page">' .
 //  			  '<table width="99%" border="0" style="border:none; border-spacing:0px;"><tr><td>' .
 			   '<h2>Welcome</h2>' .
 //			  '</td><td align="right">' .
-//			   GetFBLink( '' ) .
 //			  '</td></tr></table>' .
 			  '<p>ScoreTank is a free, interactive, easy to use system for keeping scores of sporting events and other sorts of competitions.</p>' .
 			  '<p>It makes it easy to check on how your team\'s going and who you are playing next week, plus lots of other information. The system gives you the results online as soon as they are available, and calculates ladders and other statistics for you.</p>';
@@ -127,7 +110,7 @@ function st_home( ) {
 //			   '<li id="item-107"><a href="../index.php/fixture">Fixture</a></li>' .
 //			   '<li id="item-108" class="parent"><a href="../index.php/team">Team</a></li>' .
 			  '</ul>' .
-			  GetFBLink( '' ) .
+			  add_login( ) .
 			 '</div>';
   
   //$retmenu = "";
@@ -138,19 +121,6 @@ function champlist( ) {
   $retval = "";
   $retval = "Championship List";
   $mysqli = stconnect( );
-//  $query = "select * from Team where TeamKey = 855";
-//  if( !( $tQ = mysql_query( $query ) ) ) {
-//	return( htmlspecialchars( "Error(cl1): " . mysql_error( ) ) );
-//  }
-//  if( $tR = mysql_fetch_array( $tQ ) ) {
-//	$retval .= "TName = " . $tR["TeamName"];
-//  }
-  
-//  $turl = 1;
-//  if( JRequest::getVar( 'champ' ) ) {
-//    $turl = JRequest::getVar( 'champ' ) + 1;
-//  }
-//  $retval .= "<a href='../index.php/championship-list?champ=$turl'>Test URL</a><BR/>";
 
   $retval  = '<div class="item-page">' . "\n";
   $retval .=  '<h2>Championship List</h2>' . "\n";
@@ -225,15 +195,6 @@ function champlist( ) {
   $retval .= $ChList;
  
   $retval .= '</div>';
-
-if( 0 ) { // TESTING
-  $retval  = '<div class="item-page">' . "\n";
-  $retval .=  '<h2>Championship List</h2>' . "\n";
-  $retval .= "Here are a selection of recent championships. If your championship does not appear, contact your competition administrator for the direct link.<p/>\n";
-  $retval .= '<h3>Basketball<a id="1">&nbsp;</a></h3>';
-  
-  $retval .= '</div>';
-}
 
   $retmenu = menuhead( ) .
   				menuli( 101, 0, 'welcome', 'Welcome', null ) .
@@ -873,7 +834,7 @@ function fixt( $ent = 0 ) {
     $retval .= "window.fbAsyncInit = function( ) {\n" .
         //               " window.alert( 'fbAI' ); " .
                  " FB.init({  \n" .
-                                 "  appId  : '" . get_app_id( ) . "', \n" .
+                                 "  appId  : '" . fbcred_get_app_id( ) . "', \n" .
                                          "  status : true, \n" . // check login status
                                          "  cookie : true, \n" . // enable cookies to allow the server to access the session
                                          "  xfbml  : true \n" .  // parse XFBML
@@ -1257,21 +1218,6 @@ function about( ) {
   return array( "", "", $retmenu );
 }
 
-function Xenterresults( ) {
-  $retmenu = menuhead( ) .
-  				menuli( 101, 0, 'welcome', 'Welcome', null ) .
-  				menuli( 103, 1, 'about-scoretank', 'About ScoreTank', null ) .
-  			 menufoot( 'about' );
-  return array( "", "", $retmenu );
-}
-
-function aboutXX( ) {
-  $retmenu = menuhead( ) .
-      menuli( 101, 0, 'welcome', 'Welcome', null ) .
-      menufoot( 'about' );
-  return array( "", "", $retmenu );
-}
-
 function profileselector( ) {
   $retval = "";
   //$retval .= '<link type="text/css" href="/jqlib/jquery-ui-1.8.11.custom/css/ui-lightness/jquery-ui-1.8.11.custom.css" rel="stylesheet"></script>' . "\n";
@@ -1286,7 +1232,7 @@ function profileselector( ) {
        		 '<script type="text/javascript">' . "\n";
   $retval .= "window.fbAsyncInit = function( ) {\n" .
 	         " FB.init({  \n" .
-			         "  appId  : '" . get_app_id( ) . "', \n" .
+			         "  appId  : '" . fbcred_get_app_id( ) . "', \n" .
 					 "  status : true, \n" . // check login status
 					 "  cookie : true, \n" . // enable cookies to allow the server to access the session
 					 "  xfbml  : true \n" .  // parse XFBML
@@ -1342,7 +1288,7 @@ function create( ) {
   $retval .= "window.fbAsyncInit = function( ) {\n" .
 	//		 " window.alert( 'fbAI' ); " .
 	         " FB.init({  \n" .
-			         "  appId  : '" . get_app_id( ) . "', \n" .
+			         "  appId  : '" . fbcred_get_app_id( ) . "', \n" .
 					 "  status : true, \n" . // check login status
 					 "  cookie : true, \n" . // enable cookies to allow the server to access the session
 					 "  xfbml  : true \n" .  // parse XFBML
@@ -1364,10 +1310,8 @@ function create( ) {
   $retval .= "<div id='teamDialog' title='Team'></div>";
   $retval .= "<span id='scriptprefix' style='display:none;'>" . $scriptprefix . "</div>";
   $retmenu = menuhead( ) .
-  				menuli( 101, 0, 'welcome', 'Welcome' ) .
-			  // mimic menufoot( ) sans FB
-			  '</ul>' .	
-			 '</div>';
+				  menuli( 101, 0, 'welcome', 'Welcome' ) .
+			 menufoot( 'create' );
 
   return array( $retval, "", $retmenu );
 }
@@ -1418,7 +1362,7 @@ function stfbauth( ) {
        		 '<script type="text/javascript">' . "\n";
     $retval .= "window.fbAsyncInit = function( ) {\n" .
 	         " FB.init({  \n" .
-			         "  appId  : '" . get_app_id( ) . "', \n" .
+			         "  appId  : '" . fbcred_get_app_id( ) . "', \n" .
 					 "  status : true, \n" . // check login status
 					 "  cookie : true, \n" . // enable cookies to allow the server to access the session
 					 "  xfbml  : true \n" .  // parse XFBML
@@ -1477,19 +1421,6 @@ function stfbauth( ) {
   return array( $retval, "", $retmenu );
 }
 
-function renderSTx( $inst ) {
-  $retval = "";
-  $jinput = JFactory::getApplication()->input;
-  $ArticleID = $jinput->getInt('id' );
-//  $ArticleID = 999;
-//  if( !( preg_match('/^\d+$/', $ArticleID ) ) || ( !$ArticleID ) ) {
-//	return( htmlspecialchars( "Error(r1)" ), "", "" );
-//  }
-  return( array( htmlspecialchars( "Error(r" . $ArticleID . ")" ), "", "" ) );
-//  return( array( htmlspecialchars( JFactory::getApplication()->input->post->getArray() ), "", "" ) );
-//  return( array( $data ), "", "" );
-}
-
 function renderST( $inst ) {
   $retval = "";
   $jinput = JFactory::getApplication()->input;
@@ -1526,7 +1457,6 @@ function renderST( $inst ) {
   }
   if( $ArticleID == 12 ) {
     return( fixt( 1 ) );
-//    return( about( ) );
   }
   if( $ArticleID == 13 ) {
     return( stfbauth( ) );
@@ -1537,8 +1467,7 @@ function renderST( $inst ) {
   if( $ArticleID == 15 ) {
 	return( reactable( ) );
   }
-  // $retval = "Hello World" . $ArticleID;
-  // return( $retval );
+
   return( array( "", "", "" ) );
 }
 
