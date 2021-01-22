@@ -1,6 +1,6 @@
 <?php
 
-include __DIR__ . 'stpage.php';
+include __DIR__ . '/stpage.php';
 
 function href( $str ) {
   if( strlen( $_SERVER['PATH_INFO'] ) > 1 ) {
