@@ -573,7 +573,6 @@
 /modules/mod_finder/*
 /modules/mod_footer/*
 /modules/mod_languages/*
-/modules/mod_login/*
 /modules/mod_menu/*
 /modules/mod_random_image/*
 /modules/mod_related_items/*
@@ -7147,3 +7146,11 @@ fbcred.php
 .test.php.swp
 test.php
 stdbcred.php
+administrator/language/en-GB/en-GB.plg_editors-xtd_weblink.ini
+administrator/language/en-GB/en-GB.plg_editors-xtd_weblink.sys.ini
+administrator/language/en-GB/en-GB.plg_system_weblinks.ini
+administrator/language/en-GB/en-GB.plg_system_weblinks.sys.ini
+modules/mod_login/mod_login.xml
+modules/mod_login/helper.php
+modules/mod_login/mod_login.php
+modules/mod_login/tmpl/default_logout.php

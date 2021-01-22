@@ -101,14 +101,10 @@ function st_home( ) {
 
   $retmenu = "";
   $retmenu = '<div class="moduletable">' .
-	//		  '<h3><span class="backh"><span class="backh2"><span class="backh3">ScoreTank info</span></span></span></h3>' .
 			  '<ul class="menu">' .
 			   '<li id="item-101" class="current active"><a href="index.php">Welcome</a></li>' .
 			   '<li id="item-103"><a href="index.php/about-scoretank">About ScoreTank</a></li>' .
 			   '<li id="item-105"><a href="index.php/championship-list">Championship List</a></li>' .
-//			   '<li id="item-106"><a href="../index.php/champ">Championship</a></li>' .
-//			   '<li id="item-107"><a href="../index.php/fixture">Fixture</a></li>' .
-//			   '<li id="item-108" class="parent"><a href="../index.php/team">Team</a></li>' .
 			  '</ul>' .
 			  add_login( ) .
 			 '</div>';
@@ -249,6 +245,17 @@ function LaddRow( $iter, $LadderDisplay, $TeamRecR ) {
   return( "     <tr class='ladderdata'>" . $TblRow . "</tr>\n" );
 }
 
+function addEnterResSubMenu($ChKey, $sel = 0) {
+	if( !strstr( $_SERVER['SERVER_NAME'], 'thebrasstraps.com' ) ) {
+		return '';
+	}
+	if(!( $_SERVER["REQUEST_SCHEME"] == "https" )) {
+		return '';
+	}
+	
+	return menuli( 113, $sel, 'enter-results?champ=' . $ChKey, 'Enter results' );
+}
+
 function champ( ) {
   $retval = "Championship ladder";
 
@@ -313,6 +320,7 @@ function champ( ) {
   $retval .= '<table class="champladder">' . $TblData . '</table>';
   $retval .= '</div>';
   $submenu = menuli( 107, 0, 'fixture?champ=' . $ChKey, 'Fixture' );
+  $submenu .= addEnterResSubMenu($ChKey);
   $retmenu = menuhead( ) .
   				menuli( 101, 0, 'welcome', 'Welcome', null ) .
   				menuli( 103, 0, 'about-scoretank', 'About ScoreTank', null ) .
@@ -795,6 +803,9 @@ function teamhist( ) {
 //  return array( $retval, pagehead( "History - " . $TeamRec['TeamName'] ) . $ChartScript, $retmenu );
 }
 
+// $ent: 0 = show the fixture with read-only results
+//       1 = allow the logged-in user to enter results
+//       2 = allow the facebook user to enter results (deprecated)
 function fixt( $ent = 0 ) {
   if(!( $_SERVER["REQUEST_SCHEME"] == "https" )) {
     $ent = 0;
@@ -809,15 +820,11 @@ function fixt( $ent = 0 ) {
   $retval = "";
 
   $scriptprefix = "";
-//   if( strcasecmp( $_SERVER['SERVER_NAME'], 'www.thebrasstraps.com' ) == 0 ) {
-//     $scriptprefix = "/scoretank";
-//   }
   if( strstr( $_SERVER['SERVER_NAME'], 'thebrasstraps.com' ) ) {
     $scriptprefix = "/scoretank";
   }
 
   if( $ent > 0 ) {
-	$retval .= "<meta>" . $_SERVER['SERVER_NAME'] . "</meta>";
     $retval .= '<link type="text/css" href="' . $scriptprefix . '/jqlib/jquery-ui-1.8.11.custom/css/ui-lightness/jquery-ui-1.8.11.custom.css" rel="stylesheet"></script>' . "\n";
     $retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/jquery-1.5.2.js"></script>' . "\n";
     $retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/sarissa.js"></script>' . "\n";
@@ -826,32 +833,37 @@ function fixt( $ent = 0 ) {
     $retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/jquery-ui-1.8.11.custom/development-bundle/ui/jquery-ui-1.8.11.custom.js"></script>' . "\n";
     $retval .= "<script type='text/javascript' src='" . $scriptprefix . "/templates/favouritest/stlib.js'></script>\n";
 
-    $retval .= "<div id='fb-root'></div>\n";
-    $retval .= "<div id='fbdialog' title='ScoreTank'>Message from ScoreTank</div>\n";
-    $retval .= '<script type="text/javascript" src="https://connect.facebook.net/en_US/all.js"></script>' .
-                 '<script type="text/javascript">' . "\n";
-    $retval .= '$(document).ready( function( ) { $( "#fbdialog" ).dialog( { modal: true, autoOpen: false } ) } );';
-    $retval .= "window.fbAsyncInit = function( ) {\n" .
-        //               " window.alert( 'fbAI' ); " .
-                 " FB.init({  \n" .
-                                 "  appId  : '" . fbcred_get_app_id( ) . "', \n" .
-                                         "  status : true, \n" . // check login status
-                                         "  cookie : true, \n" . // enable cookies to allow the server to access the session
-                                         "  xfbml  : true \n" .  // parse XFBML
-                                " }); " .
-                         " FB.login( function( response ) {\n" .
-                         "   if( response.authResponse ) {\n" .
-                         //"     window.alert( 'Successfully logged in' );" .
-                         "     onLoggedIn( $ChKey );" .
-                         "   } else {\n" .
-                         "     window.alert( 'You must be logged in' );" .
-                         "   }\n" .
-                         " })\n" .
-                         "}\n";
-    //$retval .= 'function loadPage() { };';
-    //$retval .= 'function onLoggedIn() { jQuery( ".scoreentry" ).removeAttr("disabled"); }';
-    $retval .= 'function SendMatchRes( inputfld ) { SendMatchResLib( inputfld ); }';
-    $retval .= '</script>' . "\n";
+	if( $ent == 2 ) {
+		$retval .= "<div id='fb-root'></div>\n";
+		$retval .= "<div id='fbdialog' title='ScoreTank'>Message from ScoreTank</div>\n";
+		$retval .= '<script type="text/javascript" src="https://connect.facebook.net/en_US/all.js"></script>' .
+					'<script type="text/javascript">' . "\n";
+		$retval .= '$(document).ready( function( ) { $( "#fbdialog" ).dialog( { modal: true, autoOpen: false } ) } );';
+		$retval .= "window.fbAsyncInit = function( ) {\n" .
+			//               " window.alert( 'fbAI' ); " .
+					" FB.init({  \n" .
+									"  appId  : '" . fbcred_get_app_id( ) . "', \n" .
+											"  status : true, \n" . // check login status
+											"  cookie : true, \n" . // enable cookies to allow the server to access the session
+											"  xfbml  : true \n" .  // parse XFBML
+									" }); " .
+							" FB.login( function( response ) {\n" .
+							"   if( response.authResponse ) {\n" .
+							//"     window.alert( 'Successfully logged in' );" .
+							"     onLoggedIn( $ChKey );" .
+							"   } else {\n" .
+							"     window.alert( 'You must be logged in' );" .
+							"   }\n" .
+							" })\n" .
+							"}\n";
+		//$retval .= 'function loadPage() { };';
+		//$retval .= 'function onLoggedIn() { jQuery( ".scoreentry" ).removeAttr("disabled"); }';
+		$retval .= 'function SendMatchRes( inputfld ) { SendMatchResLib( inputfld ); }';
+		$retval .= '</script>' . "\n";
+	} else if( $ent == 1 ) {
+		$retval .= '<script type="text/javascript">' . "\n" . '$(document).ready( function( ) { } );' . '</script>' . "\n";
+		$retval .= '<input type="button" name="test" value="test1" onclick="console.log(' . "'testbutton'". ');"></input>';
+  	}
   }
 
   $query = "SELECT DISTINCTROW Sport.SportName, Sport.SportKey, SportingBody.SBAbbrev, SportingBody.SBSportingBodyName, Grade.GradeName, Season.SeasonName, SportingBody.SBTZ, Championship.Status " .
@@ -1014,11 +1026,12 @@ function fixt( $ent = 0 ) {
   $StData .= "     <table class='teamfixttbl' border='0'>\n      ".$FixtStr."     </table>\n<p/>";
   $retval .= $StData;
   $submenu = menuli( 107, 1 - $ent, 'fixture?champ=' . $ChKey, 'Fixture' );
+  $submenu .= addEnterResSubMenu($ChKey, $sel = ($ent > 0 ? 1: 0));
   $headstr = "Fixture - ";
-  if($ent > 0) {
-    $submenu .= menuli( 113, 1, 'enter-results?champ=' . $ChKey, 'Enter Results' );
-    $headstr = "Enter Results - ";
-  }
+//  if($ent > 0) {
+//    $submenu .= menuli( 113, 1, 'enter-results?champ=' . $ChKey, 'Enter Results' );
+//    $headstr = "Enter Results - ";
+//  }
   $retmenu = menuhead( ) .
   				menuli( 101, 0, 'welcome', 'Welcome' ) .
   				menuli( 103, 0, 'about-scoretank', 'About ScoreTank' ) .
