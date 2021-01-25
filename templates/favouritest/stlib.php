@@ -2,6 +2,18 @@
 
 include __DIR__ . '/stpage.php';
 
+if (!defined('_JDEFINES'))
+{
+ 	define('JPATH_BASE', __DIR__ . '/../..');
+ 	require_once JPATH_BASE . '/includes/defines.php';
+}
+
+require_once JPATH_BASE . '/jwt/src/BeforeValidException.php';
+require_once JPATH_BASE . '/jwt/src/ExpiredException.php';
+require_once JPATH_BASE . '/jwt/src/SignatureInvalidException.php';
+require_once JPATH_BASE . '/jwt/src/JWT.php';
+use \Firebase\JWT\JWT;
+
 function href( $str ) {
   if( strlen( $_SERVER['PATH_INFO'] ) > 1 ) {
     return( " href='" . $str . "'" );
@@ -862,9 +874,11 @@ function fixt( $ent = 0 ) {
 		$retval .= '</script>' . "\n";
 	} else if( $ent == 1 ) {
 		$user = JFactory::getUser();
+		$jwt = JWT::encode(array( "userid" => $user->id, "champ" => $ChKey, "exp" => (time() + (15 * 60)) ), jwt_secret( ));
+
 		$retval .= '<script type="text/javascript">' . "\n" . '$(document).ready( function( ) { } );' . '</script>' . "\n";
 		$retval .= '<input type="button" name="test" value="test1" onclick="console.log(' . "'testbutton'".
-				 '); sendTest( ' . $user->id . ' );"></input>';
+				 '); sendTest( \'' . $jwt . '\' );"></input>';
   	}
   }
 

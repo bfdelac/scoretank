@@ -604,10 +604,9 @@ function sendTestCB( data ) {
 	console.log(data);
 }
 
-function sendTest( userId ) {
-	var queryParams = { "req" : "test", "userId" : userId };
-	console.log("sendTest posting, userId = " + userId);
-	console.log("Cookies: " + document.cookie);
+function sendTest( userIdJwt ) {
+	var queryParams = { "req" : "test", "userIdJwt" : userIdJwt };
+	console.log("sendTest posting, userId = " + userIdJwt);
 	jQuery.post("https://www.thebrasstraps.com/scoretank/templates/favouritest/xauthtest.php", queryParams, sendTestCB, "json" );
 }
 
