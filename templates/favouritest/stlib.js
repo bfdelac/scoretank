@@ -599,6 +599,18 @@ function onLoggedIn( chkey ) {
       } );
 }
 
+function sendTestCB( data ) {
+	console.log("sendTestCB, data returned: ");
+	console.log(data);
+}
+
+function sendTest( userId ) {
+	var queryParams = { "req" : "test", "userId" : userId };
+	console.log("sendTest posting, userId = " + userId);
+	console.log("Cookies: " + document.cookie);
+	jQuery.post("https://www.thebrasstraps.com/scoretank/templates/favouritest/xauthtest.php", queryParams, sendTestCB, "json" );
+}
+
 function SendMatchResLib( inputfld ) {
   var fldids = inputfld.id;
   var fldvals = inputfld.value;

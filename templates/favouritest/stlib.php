@@ -861,8 +861,10 @@ function fixt( $ent = 0 ) {
 		$retval .= 'function SendMatchRes( inputfld ) { SendMatchResLib( inputfld ); }';
 		$retval .= '</script>' . "\n";
 	} else if( $ent == 1 ) {
+		$user = JFactory::getUser();
 		$retval .= '<script type="text/javascript">' . "\n" . '$(document).ready( function( ) { } );' . '</script>' . "\n";
-		$retval .= '<input type="button" name="test" value="test1" onclick="console.log(' . "'testbutton'". ');"></input>';
+		$retval .= '<input type="button" name="test" value="test1" onclick="console.log(' . "'testbutton'".
+				 '); sendTest( ' . $user->id . ' );"></input>';
   	}
   }
 
