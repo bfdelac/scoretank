@@ -607,7 +607,8 @@ function sendTestCB( data ) {
 function sendTest( userIdJwt ) {
 	var queryParams = { "req" : "test", "userIdJwt" : userIdJwt };
 	console.log("sendTest posting, userId = " + userIdJwt);
-	jQuery.post("https://www.thebrasstraps.com/scoretank/templates/favouritest/xauthtest.php", queryParams, sendTestCB, "json" );
+	jQuery.post("/scoretank/xindexxml.php", queryParams, sendTestCB, "json" );
+//	jQuery.post("https://www.thebrasstraps.com/scoretank/templates/favouritest/xauthtest.php", queryParams, sendTestCB, "json" );
 }
 
 function SendMatchResLib( inputfld ) {
