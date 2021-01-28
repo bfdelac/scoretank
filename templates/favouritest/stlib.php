@@ -8,12 +8,6 @@ if (!defined('_JDEFINES'))
  	require_once JPATH_BASE . '/includes/defines.php';
 }
 
-require_once JPATH_BASE . '/jwt/src/BeforeValidException.php';
-require_once JPATH_BASE . '/jwt/src/ExpiredException.php';
-require_once JPATH_BASE . '/jwt/src/SignatureInvalidException.php';
-require_once JPATH_BASE . '/jwt/src/JWT.php';
-use \Firebase\JWT\JWT;
-
 function href( $str ) {
   if( strlen( $_SERVER['PATH_INFO'] ) > 1 ) {
     return( " href='" . $str . "'" );
@@ -149,7 +143,7 @@ function champlist( ) {
   $index = 0;
 
   if( !( $ChListQ = $mysqli->query( $query ) ) ) {
-	return( htmlspecialchars( "Error(cl2): " . $mysqli->error( ) ) );
+	return( htmlspecialchars( "Error(cl2): " . $mysqli->error ) );
   }
   while( $ChListR = $ChListQ->fetch_array( ) ) {
     $index++;
@@ -282,7 +276,7 @@ function champ( ) {
 	  " WHERE Championship.ChampionshipKey = $ChKey";
   $ChampRec = $mysqli->query( $query );
   if( !$ChampRec ) {
-  	return( htmlspecialchars( "Error(ch2): " . $mysqli->error( ) ) );
+  	return( htmlspecialchars( "Error(ch2): " . $mysqli->error ) );
   }
   // ChampRec;
   $query = "SELECT ChampData.LadderDisplay, ChampData.LadderSort " .
@@ -290,7 +284,7 @@ function champ( ) {
 	" WHERE Championship.ChampionshipKey = $ChKey AND Championship.DataKey = ChampData.DataKey";
   $DataRec = $mysqli->query( $query );
   if( !$DataRec ) {
-	return( htmlspecialchars( "Error(ch3): " . $mysqli->error( ) ) );
+	return( htmlspecialchars( "Error(ch3): " . $mysqli->error ) );
   }
   $DataRecR = $DataRec->fetch_array( );
 
@@ -371,7 +365,7 @@ function team( ) {
   $query = "SELECT * FROM Team WHERE TeamKey = $TeamNum";
   $TeamRecq = $mysqli->query( $query );
   if( !$TeamRecq ) {
-	return( htmlspecialchars( "Error(t2): " . $mysqli->error( ) ) );
+	return( htmlspecialchars( "Error(t2): " . $mysqli->error ) );
   }
   if( $TeamRec = $TeamRecq->fetch_array( ) ) {
 	$matchtbl = 'NMatch';
@@ -382,7 +376,7 @@ function team( ) {
 	$query = ("SELECT * FROM TeamHist WHERE TeamKey = $TeamNum");
 	$TeamRecq = $mysqli->query( $TeamRecq );
 	if( !TeamRecq ) {
-	  return( htmlspecialchars( "Error(t3): " . $mysqli->error( ) ) );
+	  return( htmlspecialchars( "Error(t3): " . $mysqli->error ) );
 	}
 	$TeamRec = $TeamRecq->fetch_array( );
   }
@@ -393,7 +387,7 @@ function team( ) {
 	" WHERE Championship.DataKey = ChampData.DataKey AND Championship.ChampionshipKey = " . $TeamRec["ChampionshipKey"] );
   $DataRecq = $mysqli->query( $query );
   if( !DataRecq ) {
-    return( htmlspecialchars( "Error(t4): " . $mysqli->error( ) ) );
+    return( htmlspecialchars( "Error(t4): " . $mysqli->error ) );
   }
   $DataRec = $DataRecq->fetch_array( );
 
@@ -406,7 +400,7 @@ function team( ) {
 			" ORDER BY RoundNumber, MatchNumber";
   $MatchRecq = $mysqli->query( $query );
   if( !$MatchRecq ) {
-	return( htmlspecialchars( "Error(t5): " . $mysqli->error( ) ) );
+	return( htmlspecialchars( "Error(t5): " . $mysqli->error ) );
   }
 
   //$FMatchRec
@@ -427,7 +421,7 @@ function team( ) {
 	" AND FRound.ChampionshipKey = FSeries.ChampionshipKey AND FRound.RoundNumber = FSeries.RoundNumber " .
 	" ORDER BY RoundNumber, MatchNumber";
   if( !( $FMatchRecq = $mysqli->query( $query ) ) ) {
-	return( htmlspecialchars( "Error(t6): " . $mysqli->error( ) ) );
+	return( htmlspecialchars( "Error(t6): " . $mysqli->error ) );
   }
 
   $retval  = '<div class="item-page">' . "\n";
@@ -607,7 +601,7 @@ $dbg .= "i";
 		" FROM (Season INNER JOIN ((Grade INNER JOIN ((SportingBody INNER JOIN Contest ON SportingBody.SBKey = Contest.SBKey) INNER JOIN Competition ON Contest.ContestKey = Competition.ContestKey) ON Grade.GradeKey = Competition.GradeKey) INNER JOIN Championship ON Competition.CompKey = Championship.CompKey) ON Season.SeasonKey = Championship.SeasonKey) INNER JOIN Sport ON Contest.SportKey = Sport.SportKey " .
 		" WHERE (((Championship.ChampionshipKey)=$ChKey))";
   if( !( $ChampRecq = $mysqli->query( $query ) ) ) {
-	return( htmlspecialchars( "Error(f2): " . $mysqli->error( ) ) );
+	return( htmlspecialchars( "Error(f2): " . $mysqli->error ) );
   }
   if( !( $ChampRec = $ChampRecq->fetch_array( ) ) ) {
 	return( htmlspecialchars( "Error(f3): Unknown Championship" ) );
@@ -640,7 +634,7 @@ function teamhist( ) {
   //$TeamRec
   $query = "SELECT * FROM Team WHERE TeamKey = $TeamNum";
   if( !( $TeamRecq = $mysqli->query( $query ) )  ) {
-	return( htmlspecialchars( "Error(th2): " . $mysqli->error( ) ) );
+	return( htmlspecialchars( "Error(th2): " . $mysqli->error ) );
   }
   if( $TeamRec = $TeamRecq->fetch_array( ) ) {
 	$teamtbl = 'Team';
@@ -649,7 +643,7 @@ function teamhist( ) {
   } else {
 	$query = "SELECT * FROM TeamHist WHERE TeamKey = $TeamNum";
 	if( !( $TeamRecq = $mysqli->query( $query ) ) ) {
-	  return( htmlspecialchars( "Error(th3): " . $mysqli->error( ) ) );
+	  return( htmlspecialchars( "Error(th3): " . $mysqli->error ) );
 	}
 	$TeamRec = $TeamRecq->fetch_array( );
 	$teamtbl = 'TeamHist';
@@ -664,14 +658,14 @@ function teamhist( ) {
 	  " WHERE HTeam.TeamKey = $matchtbl.HomeTeamKey AND ATeam.TeamKey = $matchtbl.AwayTeamKey AND (HTeam.TeamKey = $TeamNum OR ATeam.TeamKey = $TeamNum)  AND $matchtbl.Venue = HomeGround.HomeGroundKey " .
 	  " ORDER BY RoundNumber, MatchNumber";
   if( !( $MatchRecq = $mysqli->query( $query ) ) ) {
-	return( htmlspecialchars( "Error(th3): " . $mysqli->error( ) ) );
+	return( htmlspecialchars( "Error(th3): " . $mysqli->error ) );
   }
 
   //$DataRec
   $query = "SELECT * FROM Championship, ChampData " .
 				" WHERE Championship.DataKey = ChampData.DataKey AND Championship.ChampionshipKey = " . $TeamRec["ChampionshipKey"];
   if( !( $DataRecq = $mysqli->query( $query ) ) ) {
-	return( htmlspecialchars( "Error(th4): " . $mysqli->error( ) ) );
+	return( htmlspecialchars( "Error(th4): " . $mysqli->error ) );
   }
   $DataRec = $DataRecq->fetch_array( );
 
@@ -691,7 +685,7 @@ function teamhist( ) {
 	//$PosRec
 	$query = "SELECT Count(TeamKey) AS NumTeams FROM $teamtbl WHERE $teamtbl.ChampionshipKey = ".$TeamRec["ChampionshipKey"];
 	if( !( $PosRecq = $mysqli->query( $query ) ) ) {
-	  return( htmlspecialchars( "Error(th5): " . $mysqli->error( ) ) );
+	  return( htmlspecialchars( "Error(th5): " . $mysqli->error ) );
 	}
 	$PosRec = $PosRecq->fetch_array( );
 	$laddpos = array( );
@@ -706,7 +700,7 @@ function teamhist( ) {
 	$query = "SELECT * FROM $tlptbl WHERE TeamKey = $TeamNum " .
 			" ORDER BY RoundNumber";
 	if( !( $PosRecq = $mysqli->query( $query ) ) ) {
-	  return( htmlspecialchars( "Error(th6): " . $mysqli->error( ) ) );
+	  return( htmlspecialchars( "Error(th6): " . $mysqli->error ) );
 	}
 	$numround = 1;
 	$xvals = array( );
@@ -719,7 +713,7 @@ function teamhist( ) {
 	  " FROM $matchtbl " .
 	  " WHERE $matchtbl.HomeTeamKey >= 0 AND $matchtbl.ChampionshipKey =  " . $TeamRec["ChampionshipKey"];
 	if( !( $PosRecq = $mysqli->query( $query ) ) ) {
-	  return( htmlspecialchars( "Error(th7): " . $mysqli->error( ) ) );
+	  return( htmlspecialchars( "Error(th7): " . $mysqli->error ) );
 	}
 	//# why HomeTeamKey >= 0???? NFIdea - without it, SQL fails for some reason.
 	$PosRec = $PosRecq->fetch_array( );
@@ -792,7 +786,7 @@ function teamhist( ) {
 		" FROM (Season INNER JOIN ((Grade INNER JOIN ((SportingBody INNER JOIN Contest ON SportingBody.SBKey = Contest.SBKey) INNER JOIN Competition ON Contest.ContestKey = Competition.ContestKey) ON Grade.GradeKey = Competition.GradeKey) INNER JOIN Championship ON Competition.CompKey = Championship.CompKey) ON Season.SeasonKey = Championship.SeasonKey) INNER JOIN Sport ON Contest.SportKey = Sport.SportKey " .
 		" WHERE (((Championship.ChampionshipKey)=$ChKey))";
   if( !( $ChampRecq = $mysqli->query( $query ) ) ) {
-	return( htmlspecialchars( "Error(f2): " . $mysqli->error( ) ) );
+	return( htmlspecialchars( "Error(f2): " . $mysqli->error ) );
   }
   if( !( $ChampRec = $ChampRecq->fetch_array( ) ) ) {
 	return( htmlspecialchars( "Error(f3): Unknown Championship" ) );
@@ -874,11 +868,15 @@ function fixt( $ent = 0 ) {
 		$retval .= '</script>' . "\n";
 	} else if( $ent == 1 ) {
 		$user = JFactory::getUser();
-		$jwt = JWT::encode(array( "userid" => $user->id, "champ" => $ChKey, "exp" => (time() + (15 * 60)) ), jwt_secret( ));
+		$jwt = 0;	//	JWT::encode(array( "userid" => $user->id, "champ" => $ChKey, "exp" => (time() + (15 * 60)) ), jwt_secret( ));
 
-		$retval .= '<script type="text/javascript">' . "\n" . '$(document).ready( function( ) { } );' . '</script>' . "\n";
-		$retval .= '<input type="button" name="test" value="test1" onclick="console.log(' . "'testbutton'".
-				 '); sendTest( \'' . $jwt . '\' );"></input>';
+		$retval .= '<script type="text/javascript">' . "\n";
+		$retval .= '$(document).ready( function( ) { jQuery( ".scoreentry" ).removeAttr("disabled"); } );';
+		$retval .= 'function SendMatchRes( inputfld ) { SendMatchResLib( inputfld ); }';
+		$retval .= '</script>' . "\n";
+			
+//		$retval .= '<input type="button" name="test" value="test1" onclick="console.log(' . "'testbutton'".
+//				 '); sendTest( \'' . $jwt . '\' );"></input>';
   	}
   }
 
@@ -886,7 +884,7 @@ function fixt( $ent = 0 ) {
 		" FROM (Season INNER JOIN ((Grade INNER JOIN ((SportingBody INNER JOIN Contest ON SportingBody.SBKey = Contest.SBKey) INNER JOIN Competition ON Contest.ContestKey = Competition.ContestKey) ON Grade.GradeKey = Competition.GradeKey) INNER JOIN Championship ON Competition.CompKey = Championship.CompKey) ON Season.SeasonKey = Championship.SeasonKey) INNER JOIN Sport ON Contest.SportKey = Sport.SportKey " .
 		" WHERE (((Championship.ChampionshipKey)=$ChKey))";
   if( !( $ChampRecq = $mysqli->query( $query ) ) ) {
-	return( htmlspecialchars( "Error(f2): " . $mysqli->error( ) ) );
+	return( htmlspecialchars( "Error(f2): " . $mysqli->error ) );
   }
   if( !( $ChampRec = $ChampRecq->fetch_array( ) ) ) {
 	return( htmlspecialchars( "Error(f3): Unknown Championship" ) );
@@ -905,7 +903,7 @@ function fixt( $ent = 0 ) {
 		" WHERE ((($matchtbl.ChampionshipKey)=$ChKey)) " .
 		" ORDER BY $matchtbl.ChampionshipKey, $matchtbl.RoundNumber, $matchtbl.MatchNumber";
   if( !( $MatchRecq = $mysqli->query( $query ) ) ) {
-	return( htmlspecialchars( "Error(f4): " . $mysqli->error( ) ) );
+	return( htmlspecialchars( "Error(f4): " . $mysqli->error ) );
   }
 
   //$DataRec
@@ -913,7 +911,7 @@ function fixt( $ent = 0 ) {
 		" FROM ChampData INNER JOIN Championship ON ChampData.DataKey = Championship.DataKey " .
 		" WHERE (((Championship.ChampionshipKey)=$ChKey))";
   if( !( $DataRecq = $mysqli->query( $query ) ) ) {
-	return( htmlspecialchars( "Error(f5): " . $mysqli->error( ) ) );
+	return( htmlspecialchars( "Error(f5): " . $mysqli->error ) );
   }
   $DataRec = $DataRecq->fetch_array( );
 
@@ -963,7 +961,7 @@ function fixt( $ent = 0 ) {
 	  " AND ((FSeries.SeriesNumber = FMatch.SeriesNumber) AND (FSeries.RoundNumber = FMatch.RoundNumber) AND (FSeries.ChampionshipKey = FMatch.ChampionshipKey)) " .
 	  " ORDER BY FSeries.RoundNumber, FSeries.RSeriesNumber, FSeries.SeriesNumber, FMatch.MatchNumber";
   if( !( $FRecq = $mysqli->query( $query ) ) ) {
-	return( htmlspecialchars( "Error(f6): " . $mysqli->error( ) ) );
+	return( htmlspecialchars( "Error(f6): " . $mysqli->error ) );
   }
   $LastRound = 0;
   $LastSer = 0;
@@ -979,7 +977,7 @@ function fixt( $ent = 0 ) {
 									" WHERE ChampionshipKey = " . $FRec["ChampionshipKey"] .
 									" AND RoundNumber = ".$FRec["RoundNumber"]);
 	  if( !( $FRRecq = $mysqli->query( $query ) ) ) {
-		return( htmlspecialchars( "Error(f7): " . $mysqli->error( ) ) );
+		return( htmlspecialchars( "Error(f7): " . $mysqli->error ) );
 	  }
 	  if( $FRRec = $FRRecq->fetch_array( ) ) {
 		if($FRRec["RoundName"]) {
@@ -1019,7 +1017,7 @@ function fixt( $ent = 0 ) {
 		//$TRec
 		$query = ("SELECT DISTINCTROW HomeGround.HomeGroundName, HomeGround.HomeGroundAddress FROM HomeGround WHERE (((HomeGround.HomeGroundKey)=".$DummyRec['Venue']."))");
 		if( !( $TRecq = $mysqli->query( $query ) ) ) {
-		  return( htmlspecialchars( "Error(f8): " . $mysqli->error( ) ) );
+		  return( htmlspecialchars( "Error(f8): " . $mysqli->error ) );
 		}
 		if($TRec = $TRecq->fetch_array( ) ) {
 		  $VenHash[$DummyRec['Venue']] = $TRec["HomeGroundName"];
@@ -1085,7 +1083,7 @@ function fixtentbypass( ) {
 		" FROM (Season INNER JOIN ((Grade INNER JOIN ((SportingBody INNER JOIN Contest ON SportingBody.SBKey = Contest.SBKey) INNER JOIN Competition ON Contest.ContestKey = Competition.ContestKey) ON Grade.GradeKey = Competition.GradeKey) INNER JOIN Championship ON Competition.CompKey = Championship.CompKey) ON Season.SeasonKey = Championship.SeasonKey) INNER JOIN Sport ON Contest.SportKey = Sport.SportKey " .
 		" WHERE (((Championship.ChampionshipKey)=$ChKey))";
   if( !( $ChampRecq = $mysqli->query( $query ) ) ) {
-	return( htmlspecialchars( "Error(f2): " . $mysqli->error( ) ) );
+	return( htmlspecialchars( "Error(f2): " . $mysqli->error ) );
   }
   if( !( $ChampRec = $ChampRecq->fetch_array( ) ) ) {
 	return( htmlspecialchars( "Error(f3): Unknown Championship" ) );
@@ -1104,7 +1102,7 @@ function fixtentbypass( ) {
 		" WHERE ((($matchtbl.ChampionshipKey)=$ChKey)) " .
 		" ORDER BY $matchtbl.ChampionshipKey, $matchtbl.RoundNumber, $matchtbl.MatchNumber";
   if( !( $MatchRecq = $mysqli->query( $query ) ) ) {
-	return( htmlspecialchars( "Error(f4): " . $mysqli->error( ) ) );
+	return( htmlspecialchars( "Error(f4): " . $mysqli->error ) );
   }
 
   //$DataRec
@@ -1112,7 +1110,7 @@ function fixtentbypass( ) {
 		" FROM ChampData INNER JOIN Championship ON ChampData.DataKey = Championship.DataKey " .
 		" WHERE (((Championship.ChampionshipKey)=$ChKey))";
   if( !( $DataRecq = $mysqli->query( $query ) ) ) {
-	return( htmlspecialchars( "Error(f5): " . $mysqli->error( ) ) );
+	return( htmlspecialchars( "Error(f5): " . $mysqli->error ) );
   }
   $DataRec = $DataRecq->fetch_array( );
 
@@ -1150,7 +1148,7 @@ function fixtentbypass( ) {
 	  " AND ((FSeries.SeriesNumber = FMatch.SeriesNumber) AND (FSeries.RoundNumber = FMatch.RoundNumber) AND (FSeries.ChampionshipKey = FMatch.ChampionshipKey)) " .
 	  " ORDER BY FSeries.RoundNumber, FSeries.RSeriesNumber, FSeries.SeriesNumber, FMatch.MatchNumber";
   if( !( $FRecq = $mysqli->query( $query ) ) ) {
-	return( htmlspecialchars( "Error(f6): " . $mysqli->error( ) ) );
+	return( htmlspecialchars( "Error(f6): " . $mysqli->error ) );
   }
   $LastRound = 0;
   $LastSer = 0;
@@ -1166,7 +1164,7 @@ function fixtentbypass( ) {
 									" WHERE ChampionshipKey = " . $FRec["ChampionshipKey"] .
 									" AND RoundNumber = ".$FRec["RoundNumber"]);
 	  if( !( $FRRecq = $mysqli->query( $query ) ) ) {
-		return( htmlspecialchars( "Error(f7): " . $mysqli->error( ) ) );
+		return( htmlspecialchars( "Error(f7): " . $mysqli->error ) );
 	  }
 	  if( $FRRec = $FRRecq->fetch_array( ) ) {
 		if($FRRec["RoundName"]) {
@@ -1206,7 +1204,7 @@ function fixtentbypass( ) {
 		//$TRec
 		$query = ("SELECT DISTINCTROW HomeGround.HomeGroundName, HomeGround.HomeGroundAddress FROM HomeGround WHERE (((HomeGround.HomeGroundKey)=".$DummyRec['Venue']."))");
 		if( !( $TRecq = $mysqli->query( $query ) ) ) {
-		  return( htmlspecialchars( "Error(f8): " . $mysqli->error( ) ) );
+		  return( htmlspecialchars( "Error(f8): " . $mysqli->error ) );
 		}
 		if($TRec = $TRecq->fetch_array( ) ) {
 		  $VenHash[$DummyRec['Venue']] = $TRec["HomeGroundName"];
@@ -1421,7 +1419,7 @@ function stfbauth( ) {
            $query = "SELECT DISTINCTROW Sport.SportName, Sport.SportKey, SportingBody.SBAbbrev, SportingBody.SBSportingBodyName, Grade.GradeName, Season.SeasonName, SportingBody.SBTZ, Season.SeasonKey, SportingBody.SBKey, Championship.Status, Championship.ChampionshipKey " .
            " FROM (Season INNER JOIN ((Grade INNER JOIN ((SportingBody INNER JOIN Contest ON SportingBody.SBKey = Contest.SBKey) INNER JOIN Competition ON Contest.ContestKey = Competition.ContestKey) ON Grade.GradeKey = Competition.GradeKey) INNER JOIN Championship ON Competition.CompKey = Championship.CompKey) ON Season.SeasonKey = Championship.SeasonKey) INNER JOIN Sport ON Contest.SportKey = Sport.SportKey " .
            " WHERE Championship.ChampionshipKey = " . $ARec["AccredKey"];
-           $ChRecq = $mysqli->query( $query ) or die( $mysqli->error( ) );
+           $ChRecq = $mysqli->query( $query ) or die( $mysqli->error );
            $ChRec = $ChRecq->fetch_array( );
            $AccredFor = "<H1>" . $ChRec["SBAbbrev"]." ".$ChRec["GradeName"] ."</H1>\n    ".
                                    $ChRec["SportName"]. " - ".$ChRec["SeasonName"]."<p>\n    ";

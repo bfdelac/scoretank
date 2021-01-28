@@ -41,10 +41,8 @@ function LaddOrder( $LSort ) {
 }
 
 function sticonnect( ) {
-    return(
-      mysqli_connect( "", stdb_username( ), stdb_password( ), stdb_dbname( ) ) ); 
+  return( mysqli_connect( "", stdb_username( ), stdb_password( ), stdb_dbname( ) ) ); 
 }
-  
   
 
 ?>

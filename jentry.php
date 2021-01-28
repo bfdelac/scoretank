@@ -52,22 +52,35 @@ $app = JFactory::getApplication('site');
 $document = JFactory::getDocument();
 $document->setMimeEncoding('application/json');
 
-$user = JFactory::getUser();
-
+	$user = JFactory::getUser();
+	$user_id = $user->id;
 
 	$mysqli = sticonnect( );
-	$query = "select * from FBAccred " .
-			" where JoomID = $user->id ";
-	$chkq = $mysqli->query( $query ) or die( '{"error" : "ScoreTank error( 2 )"}' );
 
-	if( !( $chk = $chkq->fetch_array( ) ) ) {
-		die( '{"message" : "Authentication Key not available", "error" : "ScoreTank error( 4 - ' . $user_id . ';' . ' )"}' );
+	$fields = $_POST['fields'];
+	if(strlen($fields) <= 0) {
+		die( '{"message" : "No data submitted", "error" : "ScoreTank error(6)"}' );
+	}
+	$ikeys = preg_replace( '/\D/', '', explode( '&', $fields ) );
+	$vals = explode( '&', $_POST['vals'] );
+	$accredOK = true;
+	foreach( $ikeys as $ikey ) {
+		$accredOK = $accredOK && CheckAccredi( $mysqli, $ikey, $user_id, 4 );
+	}
+	if( !$accredOK ) {
+		die( '{"message" : "Authentication Key not available", "error" : "ScoreTank error(5)"}' );
 	}
 
+	$i = 0;
+	$chkey = 0;
+	$rnum = 0;
+	for( $i = 0; $i < count( $ikeys ); $i++ ) {
+		list( $chkey, $rnum ) = ProcessResi( $mysqli, $ikeys[$i], $vals[$i], $user_id );
+	}
+	//die( '{"message" : "Test", "error" : "ScoreTank error(551)"}' );
+	ProcessLaddi( $mysqli, $chkey, $rnum );
+	ProcessDerivedi( $mysqli, $chkey );
 
+	echo '{"inputflds" : "' . join( " ", $ikeys ) . '", "message" : "Score registered: ' . join( ";", $vals ) . ' for ' . join( ";", $ikeys ) . '"' . '}'; 
 ?>
-{
- "hello" : "world", 
- "user" : "<?php echo $user->id;?>"
-}
 

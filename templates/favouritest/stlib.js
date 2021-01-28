@@ -617,7 +617,7 @@ function SendMatchResLib( inputfld ) {
   var queryParams = { "req" : "MRes", "fields" : fldids, "vals" : fldvals // < ?php
                 // echo (', "fbSTAT" : "' . $_SESSION["fbSTATs"] . '"' );
          };
-  jQuery.post( "https://www.thebrasstraps.com/scoretank/fb/xentry.php",
+  jQuery.post( "/scoretank/jentry.php",
                           queryParams,
                           SendMatchResCB,
                           "json" );
@@ -641,6 +641,8 @@ console.log("posting");
 }
 
 function SendMatchResCB( data ) {
+	console.log("SendMatchResCB, data returned: ");
+	console.log(data);
   if( data.inputflds ) {
     afields = data.inputflds.split( " " );
     var i = 0;
@@ -654,7 +656,7 @@ function SendMatchResCB( data ) {
       //jQuery( "#fbdialog" ).text( data.message + ", " + data.error );
       //jQuery( "#fbdialog" ).dialog( 'open' );
     } else {
-      alert("Error: " + data.message);
+      alert("Error: " + data.error);
       //jQuery( "#fbdialog" ).text( data.error );
       //jQuery( "#fbdialog" ).dialog( 'open' );
     }

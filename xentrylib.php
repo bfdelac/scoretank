@@ -1,12 +1,15 @@
 <?php
 
-function CAChampi( $mysqli, $ikey, $user_id, $tbl, $refcol ) {
+// $accredmethod: 1 -> Facebook
+//                4 -> Joomla
+function CAChampi( $mysqli, $ikey, $user_id, $tbl, $refcol, $accredmethod = 1 ) {
     $query = "select * from $tbl, FBAccred " .
         " where $tbl.ChampionshipKey = FBAccred.AccredKey " .
-        " and AccredRole = 1 " .			// Championship
+        " and AccredRole = $accredmethod " .			// Championship
         " and $ikey = $refcol " .
         " and FBAccred.FBID = " . $user_id;
-    $ChkIdQ = $mysqli->query( $query ) or die( '{"error" : "ScoreTank error (e51) - ' . $mysqli->error( ) . ' (' . $query . ')"}' );
+        $ChkIdQ = $mysqli->query( $query ) or die( '{"error" : "ScoreTank error (e51) - ' . $mysqli->error . ' (' . $query . ')"}' );
+
     if( $ChkIdQ->fetch_array( ) ) {
       return( true );
     }
@@ -21,7 +24,7 @@ function CAChampi( $mysqli, $ikey, $user_id, $tbl, $refcol ) {
         " and AccredRole = 2 " .		  // Team
         " and $ikey = $refcol " .
         " and FBAccred.FBID = " . $user_id;
-    $ChkIdQ = $mysqli->query( $query ) or die( '{"error" : "ScoreTank error (e52) - ' . $mysqli->error( ) . '"}' );
+    $ChkIdQ = $mysqli->query( $query ) or die( '{"error" : "ScoreTank error (e52) - ' . $mysqli->error . '"}' );
     if( $ChkIdQ->fetch_array( ) ) {
       return( true );
     }
@@ -38,7 +41,7 @@ function CAChampi( $mysqli, $ikey, $user_id, $tbl, $refcol ) {
         " and FSeries.RoundNumber = FMatch.RoundNumber " .
         " and FSeries.SeriesNumber = FMatch.SeriesNumber " .
         " and FBAccred.FBID = " . $user_id;
-    $ChkIdQ = $mysqli->query( $query ) or die( '{"error" : "ScoreTank error (e53) - ' . $mysqli->error( ) . '"}' );
+    $ChkIdQ = $mysqli->query( $query ) or die( '{"error" : "ScoreTank error (e53) - ' . $mysqli->error . '"}' );
     if( $ChkIdQ->fetch_array( ) ) {
       return( true );
     }
@@ -46,20 +49,21 @@ function CAChampi( $mysqli, $ikey, $user_id, $tbl, $refcol ) {
     return( false );
   }
   
-  function CheckAccredi( $mysqli, $ikey, $user_id ) {
-    if( CAChampi( $mysqli, $ikey, $user_id, "NMatch", "MatchRef" ) ) { return( true ); }
-    if( CAChampi( $mysqli, $ikey, $user_id, "NMatch", "MatchRef2" ) ) { return( true ); }
-    if( CAChampi( $mysqli, $ikey, $user_id, "FMatch", "MatchRef" ) ) { return( true ); }
-  //die( '{"error" : "mark" }' );
-    if( CAChampi( $mysqli, $ikey, $user_id, "FMatch",  "MatchRef2" ) ) { return( true ); }
-    if( CAChampi( $mysqli, $ikey, $user_id, "Round", "RoundRef" ) ) { return( true ); }
-    if( CAChampi( $mysqli, $ikey, $user_id, "FRound", "RoundRef" ) ) { return( true ); }
-    if( CATeami( $mysqli, $ikey, $user_id, "MatchRef", "HomeTeamKey" ) ) { return( true );}
-    if( CATeami( $mysqli, $ikey, $user_id, "MatchRef2", "AwayTeamKey" ) ) { return( true );}
-    if( CATeamFinali( $mysqli, $ikey, $user_id, "MatchRef", "HomeTeamKey" ) ) { return( true );}
-    if( CATeamFinali( $mysqli, $ikey, $user_id, "MatchRef2", "AwayTeamKey" ) ) { return( true );}
-    return( false );
-  }
+// $accredmethod: 1 -> Facebook
+//                4 -> Joomla
+function CheckAccredi( $mysqli, $ikey, $user_id, $accredmethod = 1 ) {
+  if( CAChampi( $mysqli, $ikey, $user_id, "NMatch", "MatchRef", $accredmethod ) ) { return( true ); }
+  if( CAChampi( $mysqli, $ikey, $user_id, "NMatch", "MatchRef2", $accredmethod ) ) { return( true ); }
+  if( CAChampi( $mysqli, $ikey, $user_id, "FMatch", "MatchRef", $accredmethod ) ) { return( true ); }
+  if( CAChampi( $mysqli, $ikey, $user_id, "FMatch",  "MatchRef2", $accredmethod ) ) { return( true ); }
+  if( CAChampi( $mysqli, $ikey, $user_id, "Round", "RoundRef", $accredmethod ) ) { return( true ); }
+  if( CAChampi( $mysqli, $ikey, $user_id, "FRound", "RoundRef", $accredmethod ) ) { return( true ); }
+  if( CATeami( $mysqli, $ikey, $user_id, "MatchRef", "HomeTeamKey", $accredmethod ) ) { return( true );}
+  if( CATeami( $mysqli, $ikey, $user_id, "MatchRef2", "AwayTeamKey", $accredmethod ) ) { return( true );}
+  if( CATeamFinali( $mysqli, $ikey, $user_id, "MatchRef", "HomeTeamKey", $accredmethod ) ) { return( true );}
+  if( CATeamFinali( $mysqli, $ikey, $user_id, "MatchRef2", "AwayTeamKey", $accredmethod ) ) { return( true );}
+  return( false );
+}
   
   function ProcessDerivedi( $mysqli, $ChampKey ) {
     //see if there are any ladder-dependant positions that depend
@@ -277,7 +281,7 @@ function CAChampi( $mysqli, $ikey, $user_id, $tbl, $refcol ) {
   //VALUES (" . $LaddRec["TeamKey"] . ", $MaxRnd, $Iter )";
           $query = "INSERT INTO TeamLadderPos (TeamKey, RoundNumber, LadderPos) VALUES (".$LaddRec["TeamKey"].", $MaxRnd, $Iter)";
   //die( '{"error" : "Debugging (will be gone shortly - e36) " . $query }' ); // BBBBB
-          $mysqli->query( $query ) or die( '{"error" : "ScoreTank error (e36: ' . $query . ' - ' . $mysqli->error( ) . ')" }' );
+          $mysqli->query( $query ) or die( '{"error" : "ScoreTank error (e36: ' . $query . ' - ' . $mysqli->error . ')" }' );
   //die( '{ "error" : "PL2c: ' . $query . '" }' );
         }
   //die( '{ "error" : "PL2" }' );
@@ -512,16 +516,18 @@ function CAChampi( $mysqli, $ikey, $user_id, $tbl, $refcol ) {
     AND Team.ChampionshipKey = Championship.ChampionshipKey
     AND Championship.DataKey = ChampData.DataKey";
     $TeamRecQ = $mysqli->query( $query ) or die( '{"error" : "ScoreTank error( e13 )"}' );
+
     if($TeamRec = $TeamRecQ->fetch_array( ) ) {
       $LastCount = 0;
-      if( preg_match( "J(\d*)", $TeamRec["LadderDisplay"], $pm ) ) {
+      if( preg_match( "/J(\d*)/", $TeamRec["LadderDisplay"], $pm ) ) {
         $LastCount = $pm[1];
       }
   
       $MoreStreak = 0;
-      if( preg_match( "K", $DataRec["LadderDisplay"]  ) ) {
+      if( preg_match( "/K/", $DataRec["LadderDisplay"]  ) ) {
         $MoreStreak = 1;
       }
+
       while(($LMatch = array_shift($SortMatches)) &&
               (($LastCount > 0) ||
               $MoreStreak)) {
@@ -560,6 +566,7 @@ function CAChampi( $mysqli, $ikey, $user_id, $tbl, $refcol ) {
     } else {
       $Points = GetLaddPointsi( $mysqli, $teamkey, $Won, $Tied, $Lost, $Byes, $Forfeit);
     }
+
     if( $roundnumber ) {
       // We haven't got the full gamut of results - just up to round $_[1],
       // which is going to be used by the calling procedure
@@ -815,8 +822,6 @@ function ProcessResi( $mysqli, $MRRef, $Score, $user_id ) {
             $res = 'D';
           }
         }
-  //die( '{"error" : "Home: ' . $home . ', Away: ' . $away . '"}' );
-  
       } else {
         foreach( explode( ' ' , $Score ) as $setscore ) {
           $pregmatches = preg_match( '/^([0-9]+)-([0-9]+)([*]?)$/', $setscore, $matches );
@@ -851,7 +856,7 @@ function ProcessResi( $mysqli, $MRRef, $Score, $user_id ) {
     } else {
       $query = "UPDATE $TName SET Result = '$res', HomeTeamScore = $HTScore, AwayTeamScore = $ATScore, HomeTeamSupScore = 0, AwayTeamSupScore = 0, HomeTeamRawScore = '$Score' WHERE MatchRef = $MatchRef";
     }
-  //die( '{"error" : "updt: ' . $query . '"}' );
+
     $mysqli->query( $query ) or
         die( '{"error" : "ScoreTank error (e4 - ' . $res . ', ' . $HTScore . ', ' . $ATScore . ', ' . $Score . ', ' . ')"}' );
       // die( json_encode( array( "error" => $query ) ) );
@@ -922,7 +927,7 @@ function ProcessResi( $mysqli, $MRRef, $Score, $user_id ) {
               FROM FSeries
               WHERE AwayDerivChamp = ".$DataRec["ChampionshipKey"]."
               AND AwayDerivRank = ".$DataRec["SeriesNumber"];
-        $FRecQ = $mysqli->query( $query ) or die( '{"error" : "ScoreTank error (e8: ' . $mysqli->error( ) . ')"}' );
+        $FRecQ = $mysqli->query( $query ) or die( '{"error" : "ScoreTank error (e8: ' . $mysqli->error . ')"}' );
         while( $FRec = $FRecQ->fetch_array( ) ) {
           $FTeamNum = null;
           if($FRec["AwayDeriv"] == 'W') {

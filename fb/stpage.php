@@ -334,7 +334,7 @@ function FinalTeami( $mysqli, $teamkey, $deriv, $rank, $chkey ) {
   FROM FSeries
   WHERE ChampionshipKey = ".$chkey ."
   AND SeriesNumber = " . $rank );
-  $MRecq = $mysqli->query( $query ) or die( $mysqli->error( ) .
+  $MRecq = $mysqli->query( $query ) or die( $mysqli->error .
 			"<BR/>" . $query );
   if($MRec = $MRecq->fetch_array( ) ) {
     if($MRec["SeriesName"]) {
@@ -345,7 +345,7 @@ function FinalTeami( $mysqli, $teamkey, $deriv, $rank, $chkey ) {
 	  $query = ("SELECT DISTINCTROW RoundName from FRound
 	  where ChampionshipKey = ".$chkey."
 	  AND RoundNumber = ".$MRec["RoundNumber"]);
-	  $RDescq = $mysqli->query( $query ) or die( $mysqli->error( ) );
+	  $RDescq = $mysqli->query( $query ) or die( $mysqli->error );
 	  if($RDesc = $RDescq->fetch_array( ) ) {
 	    if( $RDesc["RoundName"] ) {
 		  $MDescr = $RDesc["RoundName"]."<BR/>Match ".$MRec["RSeriesNumber"];
@@ -372,7 +372,7 @@ function GetTeamNamei( $mysqli, $tkey ) {
     $query = "SELECT DISTINCTROW Team.TeamName
     FROM Team
     WHERE Team.TeamKey =".$tkey;
-    $TRecq = $mysqli->query( $query ) or die( $mysqli->error( ) );
+    $TRecq = $mysqli->query( $query ) or die( $mysqli->error );
     if($TRec = $TRecq->fetch_array( ) ) {
 	  $TeamHash[$tkey] = $TRec['TeamName'];
     } else {
@@ -399,7 +399,7 @@ function fmttime( $scheduled, $lastdate ) {
 function ListFansi( $mysqli, $TeamNum, $user_id ) {
   $StData = "";
   $query = "select * from FBAccred where AccredRole = 3 and AccredKey = $TeamNum";
-  $tmemq = $mysqli->query( $query ) or die( $mysqli->error( ) );
+  $tmemq = $mysqli->query( $query ) or die( $mysqli->error );
   $numfans = 0;
   $hasyou = 0;
   while( $tmemr = $tmemq->fetch_array( $tmemq ) ) {
