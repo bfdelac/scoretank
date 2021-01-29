@@ -54,6 +54,9 @@ $document->setMimeEncoding('application/json');
 
 	$user = JFactory::getUser();
 	$user_id = $user->id;
+	if($user_id <= 0) {
+		die( '{"message" : "Not authorised; please refresh page and log in again if necessary", "error" : "ScoreTank error(7)"}' );
+	}
 
 	$mysqli = sticonnect( );
 
@@ -61,6 +64,7 @@ $document->setMimeEncoding('application/json');
 	if(strlen($fields) <= 0) {
 		die( '{"message" : "No data submitted", "error" : "ScoreTank error(6)"}' );
 	}
+
 	$ikeys = preg_replace( '/\D/', '', explode( '&', $fields ) );
 	$vals = explode( '&', $_POST['vals'] );
 	$accredOK = true;

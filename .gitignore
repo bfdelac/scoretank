@@ -7153,7 +7153,6 @@ administrator/language/en-GB/en-GB.plg_system_weblinks.sys.ini
 modules/mod_login/mod_login.xml
 modules/mod_login/helper.php
 modules/mod_login/mod_login.php
-modules/mod_login/tmpl/default_logout.php
 php.ini
 composer.json
 jwt/LICENSE

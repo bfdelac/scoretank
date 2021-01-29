@@ -65,13 +65,17 @@ function menufoot( $script ) {
   return( $retmenu );
 }
 
-function menuli( $inum, $active, $pageurl, $pagename, $submenu = null ) {
-  $retmenu = '<li id="item-' . $inum . '" ' . ( $active ? 'class="current active"' : ( isset( $submenu ) ? 'class="active deeper parent"' : "" ) ) . '><a ' . href( $pageurl ) . '>' . $pagename . '</a>';
-  if( isset( $submenu ) ) {
-    $retmenu .= '<ul class="submenu">' . $submenu . '</ul>';
-  }
-  $retmenu .= '</li>';
-  return( $retmenu );
+function menuli( $inum, $active, $pageurl, $pagename, $submenu = null, $disabled = false ) {
+	if($disabled) {
+		return ('');
+		//return('<li id="item-' . $inum . '"><i>' . $pagename . '</i></li>');
+	}
+	$retmenu = '<li id="item-' . $inum . '" ' . ( $active ? 'class="current active"' : ( isset( $submenu ) ? 'class="active deeper parent"' : "" ) ) . '><a ' . href( $pageurl ) . '>' . $pagename . '</a>';
+	if( isset( $submenu ) ) {
+		$retmenu .= '<ul class="submenu">' . $submenu . '</ul>';
+	}
+	$retmenu .= '</li>';
+	return( $retmenu );
 }
 
 
@@ -258,8 +262,8 @@ function addEnterResSubMenu($ChKey, $sel = 0) {
 	if(!( $_SERVER["REQUEST_SCHEME"] == "https" )) {
 		return '';
 	}
-	
-	return menuli( 113, $sel, 'enter-results?champ=' . $ChKey, 'Enter results' );
+	$user = JFactory::getUser();
+	return menuli( 113, $sel, 'enter-results?champ=' . $ChKey, 'Enter results', null, $disabled = ($user->id <= 0) );
 }
 
 function champ( ) {
@@ -304,9 +308,11 @@ function champ( ) {
 	  return( htmlspecialchars( "Error(ch4): " . $mysqli_error( ) ) );
 	}
 	$tz = $ChampRecR["SBTZ"];
-	$tz = preg_replace( '/^\s+/', '' );
-	if(strlen($tz) > 0) {
-	  //            $ENV{TZ}=":$tz";
+	if(!is_null($tz)) {
+		$tz = preg_replace( '/^\s+/', '', $tz );
+		if(strlen($tz) > 0) {
+		//            $ENV{TZ}=":$tz";
+		}
 	}
     $Iter = 1;
 	$TblData = LaddHead( $DataRecR["LadderDisplay"] );
@@ -386,7 +392,7 @@ function team( ) {
   $query = ("SELECT * FROM Championship, ChampData " .
 	" WHERE Championship.DataKey = ChampData.DataKey AND Championship.ChampionshipKey = " . $TeamRec["ChampionshipKey"] );
   $DataRecq = $mysqli->query( $query );
-  if( !DataRecq ) {
+  if( !$DataRecq ) {
     return( htmlspecialchars( "Error(t4): " . $mysqli->error ) );
   }
   $DataRec = $DataRecq->fetch_array( );
@@ -524,8 +530,7 @@ $dbg .= "i";
 	  $LastRound = $FRec["RoundNumber"];
 	  
 	  if( ( $mode == 3 ) && ($FRec["AwayTeamKey"] != -1 ) ) {
-	    $ven = $FRec["HomeGroundAddress"];
-		$ven = preg_replace( '\n', '<br/>' );
+		$ven = preg_replace( '/\n/', '<br/>', $FRec["HomeGroundAddress"] );
 		$ts = strtotime( $FRec["Scheduled"] );
 
 		$RoundStr .= "<tr class='match'><td>" . $FRec["HomeTeamName"] . "</td><td>vs</td><td>" . $FRec["AwayTeamName"] . "</td></tr>" .
@@ -816,8 +821,14 @@ function fixt( $ent = 0 ) {
   if(!( $_SERVER["REQUEST_SCHEME"] == "https" )) {
     $ent = 0;
   }
+  $user = JFactory::getUser();
+  if($user->id <= 0) {
+	  $ent = 0;
+  }
   if( !( $ChKey = JRequest::getVar( 'champ' ) ) ) {
-	return( htmlspecialchars( "Error(f1)" ) );
+	return (array( "Championship error(f1)",
+	 			  pagehead( "Error" ),
+	 			  menuhead( ) . menuli( 101, 0, 'welcome', 'Welcome', null ) . menufoot( "champ" ) ) );
   }
   if( !( preg_match('/^\d+$/', $ChKey ) ) || ( !$ChKey ) ) {
 	return( htmlspecialchars( "Error(f1a)" ) );
