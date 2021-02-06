@@ -851,28 +851,29 @@ function fixt( $ent = 0 ) {
     $retval .= "<script type='text/javascript' src='" . $scriptprefix . "/templates/favouritest/stlib.js'></script>\n";
 
 	if( $ent == 2 ) {
-		$retval .= "<div id='fb-root'></div>\n";
-		$retval .= "<div id='fbdialog' title='ScoreTank'>Message from ScoreTank</div>\n";
-		$retval .= '<script type="text/javascript" src="https://connect.facebook.net/en_US/all.js"></script>' .
-					'<script type="text/javascript">' . "\n";
-		$retval .= '$(document).ready( function( ) { $( "#fbdialog" ).dialog( { modal: true, autoOpen: false } ) } );';
-		$retval .= "window.fbAsyncInit = function( ) {\n" .
-			//               " window.alert( 'fbAI' ); " .
-					" FB.init({  \n" .
-									"  appId  : '" . fbcred_get_app_id( ) . "', \n" .
-											"  status : true, \n" . // check login status
-											"  cookie : true, \n" . // enable cookies to allow the server to access the session
-											"  xfbml  : true \n" .  // parse XFBML
-									" }); " .
-							" FB.login( function( response ) {\n" .
-							"   if( response.authResponse ) {\n" .
-							//"     window.alert( 'Successfully logged in' );" .
-							"     onLoggedIn( $ChKey );" .
-							"   } else {\n" .
-							"     window.alert( 'You must be logged in' );" .
-							"   }\n" .
-							" })\n" .
-							"}\n";
+		//$retval .= "<div id='fb-root'></div>\n";
+		//$retval .= "<div id='fbdialog' title='ScoreTank'>Message from ScoreTank</div>\n";
+		//$retval .= '<script type="text/javascript" src="https://connect.facebook.net/en_US/all.js"></script>';
+		$retval .=	'<script type="text/javascript">' . "\n";
+		//$retval .= '$(document).ready( function( ) { $( "#fbdialog" ).dialog( { modal: true, autoOpen: false } ) } );';
+		$retval .= '$(document).ready( function( ) { } );';
+		// $retval .= "window.fbAsyncInit = function( ) {\n" .
+		// 	//               " window.alert( 'fbAI' ); " .
+		// 			" FB.init({  \n" .
+		// 							"  appId  : '" . fbcred_get_app_id( ) . "', \n" .
+		// 									"  status : true, \n" . // check login status
+		// 									"  cookie : true, \n" . // enable cookies to allow the server to access the session
+		// 									"  xfbml  : true \n" .  // parse XFBML
+		// 							" }); " .
+		// 					" FB.login( function( response ) {\n" .
+		// 					"   if( response.authResponse ) {\n" .
+		// 					//"     window.alert( 'Successfully logged in' );" .
+		// 					"     onLoggedIn( $ChKey );" .
+		// 					"   } else {\n" .
+		// 					"     window.alert( 'You must be logged in' );" .
+		// 					"   }\n" .
+		// 					" })\n" .
+		// 					"}\n";
 		//$retval .= 'function loadPage() { };';
 		//$retval .= 'function onLoggedIn() { jQuery( ".scoreentry" ).removeAttr("disabled"); }';
 		$retval .= 'function SendMatchRes( inputfld ) { SendMatchResLib( inputfld ); }';
@@ -932,8 +933,8 @@ function fixt( $ent = 0 ) {
   //        $ENV{TZ}=":$tz";
   //    }
 
-  $StData = "<h2><a " . href( 'fixture?champ=' . $ChKey ) . ">" . htmlspecialchars( $ChampRec["SBAbbrev"]." ".$ChampRec["GradeName"] ) . "</a></h2>\n";
-  $StData .= $ChampRec["SportName"]. " - ".$ChampRec["SeasonName"] . "<p/>";
+  //$StData = "<h2><a " . href( 'fixture?champ=' . $ChKey ) . ">" . htmlspecialchars( $ChampRec["SBAbbrev"]." ".$ChampRec["GradeName"] ) . "</a></h2>\n";
+  //$StData .= $ChampRec["SportName"]. " - ".$ChampRec["SeasonName"] . "<p/>";
   $LastRound = 0;
   $LastDate = "";
   $FixtStr = "";
@@ -948,19 +949,9 @@ function fixt( $ent = 0 ) {
 	  $LastRound = $MatchRec["RoundNumber"];
 	  $FixtStr = $FixtStr . MakeMatchHead( "Round " . $LastRound );
 	}
-//	if( $ent ) {
-//	  $FixtStr = $FixtStr . MakeMatchEnt( $MatchRec, $DataRec["ScoreFormat"], $LastDate );
-//	} else {
-	  $FixtStr = $FixtStr . "<span>" .
+	$FixtStr = $FixtStr .
 		( ( $ent > 0 ) ? MakeMatchEnt( $MatchRec, $DataRec["ScoreFormat"], $LastDate) :
-                                 MakeMatch( $MatchRec, $DataRec["ScoreFormat"], "", $LastDate ) ) .
-		"<span hidden>" .
-		date( "g:iA D, j M Y", strtotime( $LastDate ) ) . ", " .
-		date( "g:iA D, j M Y", strtotime( $MatchRec["Scheduled"] ) ) . ", " .
-		"</span>" .
-		"</span>";
-//	  $FixtStr = $FixtStr . MakeMatch( $MatchRec, $DataRec["ScoreFormat"], "", $LastDate );
-//	}
+                                 MakeMatch( $MatchRec, $DataRec["ScoreFormat"], "", $LastDate ) );
 	$LastDate = $MatchRec["Scheduled"];
   }
 
@@ -1048,7 +1039,7 @@ function fixt( $ent = 0 ) {
   $FixtStr .= $FStr;
   //ENDFINALS
 
-  $StData .= "     <table class='teamfixttbl' border='0'>\n      ".$FixtStr."     </table>\n<p/>";
+  $StData = "     <table class='teamfixttbl' border='0'>\n      ".$FixtStr."     </table>\n<p/>";
   $retval .= $StData;
   $submenu = menuli( 107, 1 - $ent, 'fixture?champ=' . $ChKey, 'Fixture' );
   $submenu .= addEnterResSubMenu($ChKey, $sel = ($ent > 0 ? 1: 0));
@@ -1141,14 +1132,9 @@ function fixtentbypass( ) {
 	  $LastRound = $MatchRec["RoundNumber"];
 	  $FixtStr = $FixtStr . MakeMatchHead( "Round " . $LastRound );
 	}
-	$FixtStr = $FixtStr . "<span>" .
+	$FixtStr = $FixtStr .
 		( ( $ent > 0 ) ? MakeMatchEnt( $MatchRec, $DataRec["ScoreFormat"], $LastDate) :
-                                 MakeMatch( $MatchRec, $DataRec["ScoreFormat"], "", $LastDate ) ) .
-		"<span hidden>" .
-		date( "g:iA D, j M Y", strtotime( $LastDate ) ) . ", " .
-		date( "g:iA D, j M Y", strtotime( $MatchRec["Scheduled"] ) ) . ", " .
-		"</span>" .
-		"</span>";
+                                 MakeMatch( $MatchRec, $DataRec["ScoreFormat"], "", $LastDate ) );
 	$LastDate = $MatchRec["Scheduled"];
   }
 
@@ -1299,59 +1285,89 @@ function profileselector( ) {
   return array( $retval, "", $retmenu );
 }
 
+
+function pagehead2( $title, $showjq = true ) {
+	$path_parts = pathinfo( $_SERVER["PHP_SELF"] );
+	$linkbase = "/scoretank";
+	$retval =
+	'<base href="' . $_SERVER["REQUEST_SCHEME"] . '://' . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"] . '" />' . "\n" .
+	'<meta http-equiv="content-type" content="text/html; charset=utf-8" />' . "\n" .
+	'<meta name="title" content="' . $title . '" />' . "\n" .
+	'<meta name="author" content="Administrator" />' . "\n" .
+	'<meta name="description" content="ScoreTank - Free Community Sports Management" />' . "\n" .
+	'<meta name="generator" content="Joomla! 1.6 - Open Source Content Management" />' . "\n" .
+	'<title>' . $title . '</title>' . "\n" .
+	'<link href="' . $_SERVER["REQUEST_URI"] . '" rel="canonical" />' . "\n" .
+	'<link href="' . $linkbase . '/templates/favouritest/favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />' . "\n" .
+	'<link rel="stylesheet" href="' . $linkbase . '/media/jui/css/bootstrap.min.css" type="text/css"/>' . "\n" .
+	'<link rel="stylesheet" href="' . $linkbase . '/media/jui/css/bootstrap-responsive.css" type="text/css"/>' . "\n";
+	if( $showjq ) {
+		$retval .= '<script type="text/javascript" src="' . $linkbase . '/media/jui/js/jquery.min.js"></script>' . "\n";
+		$retval .= '<script type="text/javascript" src="' . $linkbase . '/jqlib/sarissa.js"></script>' . "\n";
+		$retval .= '<script type="text/javascript" src="' . $linkbase . '/jqlib/sarissa_ieemu_xpath.js"></script>' . "\n";
+		$retval .= '<script type="text/javascript" src="' . $linkbase . '/jqlib/jquery.xslTransform.js"></script>' . "\n";
+		$retval .= '<script type="text/javascript" src="' . $linkbase . '/jqlib/jquery-ui-1.8.11.custom/development-bundle/ui/jquery-ui-1.8.11.custom.js"></script>' . "\n";
+		$retval .= "<script type='text/javascript' src='" . $linkbase . "/templates/favouritest/stlib.js'></script>\n";
+	
+		// $retval .=
+		// '<script src="' . $linkbase . '/media/jui/js/jquery.min.js" type="text/javascript"></script>' . "\n" .
+		// '<script src="' . $linkbase . '/media/jui/js/jquery-noconflict.js" type="text/javascript"></script>' . "\n" .
+		// '<script src="' . $linkbase . '/media/jui/js/jquery-migrate.min.js" type="text/javascript"></script>' . "\n" .
+		$retval .= '<script src="' . $linkbase . '/media/system/js/caption.js" type="text/javascript"></script>' . "\n";
+		// '<script src="' . $linkbase . '/media/jui/js/bootstrap.min.js" type="text/javascript"></script>' . "\n" .
+		$retval .= '<script type="text/javascript">' . "\n";
+		$retval .= '  $(document).ready( function() { ' .
+			' console.log("docready"); ' .
+			' initialiseCompAdmin(); ' .
+			' });' . "\n";
+		$retval .= 'jQuery(window).on(\'load\', function() { new JCaption(\'img.caption\');' . "\n" . '});' . "\n";
+		$retval .= '</script>' . "\n";
+	}
+	return( $retval );
+  
+}
+  
 function create( ) {
-  //$mysqli = sticonnect( );
-  $retval = "";
+	//$mysqli = sticonnect( );
+	if( !strstr( $_SERVER['SERVER_NAME'], 'thebrasstraps.com' ) ) {
+		return st_home( );
+	}
+	if(!( $_SERVER["REQUEST_SCHEME"] == "https" )) {
+		return st_home( );
+	}
 
-  $scriptprefix = "";
-  if( strstr( $_SERVER['SERVER_NAME'], 'thebrasstraps.com' ) ) {
+
+	$retval = "";
+
     $scriptprefix = "/scoretank";
-  }
 
-  $retval .= '<link type="text/css" href="' . $scriptprefix . '/jqlib/jquery-ui-1.8.11.custom/css/ui-lightness/jquery-ui-1.8.11.custom.css" rel="stylesheet"></script>' . "\n";
-  // note! 27 Aug 2016... this jQuery call is a 2nd one, as /media/jui/js/jquery.min.js is already loaded. Let's aim at cleaning this up in future!
-  // this causes a conflict - nb 1.5.2 doesn't support isNumeric
-  $retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/jquery-1.5.2.js"></script>' . "\n";
-  //$retval .= '<script type="text/javascript" src="/media/jui/js/jquery.min.js"></script>' . "\n";
-  $retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/sarissa.js"></script>' . "\n";
-  $retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/sarissa_ieemu_xpath.js"></script>' . "\n";
-  $retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/jquery.xslTransform.js"></script>' . "\n";
-  $retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/jquery-ui-1.8.11.custom/development-bundle/ui/jquery-ui-1.8.11.custom.js"></script>' . "\n";
-  $retval .= "<script type='text/javascript' src='" . $scriptprefix . "/templates/favouritest/stlib.js'></script>\n";
-//  $retval .= "<script type='text/javascript'>\n";
-//  $retval .= "</script>\n";
-  $retval .= "<div id='fb-root'></div>\n";
-  $retval .= '<script type="text/javascript" src="https://connect.facebook.net/en_US/all.js"></script>' .
-       		 '<script type="text/javascript">' . "\n";
-  $retval .= "window.fbAsyncInit = function( ) {\n" .
-	//		 " window.alert( 'fbAI' ); " .
-	         " FB.init({  \n" .
-			         "  appId  : '" . fbcred_get_app_id( ) . "', \n" .
-					 "  status : true, \n" . // check login status
-					 "  cookie : true, \n" . // enable cookies to allow the server to access the session
-					 "  xfbml  : true \n" .  // parse XFBML
-				" }); " .
-			 " FB.login( function( response ) {\n" .
-			 "   if( response.authResponse ) {\n" .
-			 "     window.alert( 'Successfully logged in' );" .
-			 "     loadPage( );" .
-			 "   } else {\n" .
-			 "     window.alert( 'You must be logged in' );" .
-			 "   }\n" .
-			 " })\n" .
-			 "}\n";
-  $retval .= '</script>' . "\n";
-  $retval .= "<span>This is a test system for Admin Data Entry. It uses Facebook authentication &amp; ScoreTank authorisation.</span><p/>";
-  $retval .= "<span id='adminpage'></span>";
-  $retval .= "<div id='matchDialog' title='Match'></div>";
-  $retval .= "<div id='champDialog' title='Championship'></div>";
-  $retval .= "<div id='teamDialog' title='Team'></div>";
-  $retval .= "<span id='scriptprefix' style='display:none;'>" . $scriptprefix . "</div>";
+if(false) {
+	$retval .= '<link type="text/css" href="' . $scriptprefix . '/jqlib/jquery-ui-1.8.11.custom/css/ui-lightness/jquery-ui-1.8.11.custom.css" rel="stylesheet"></script>' . "\n";
+	// note! 27 Aug 2016... this jQuery call is a 2nd one, as /media/jui/js/jquery.min.js is already loaded. Let's aim at cleaning this up in future!
+	// this causes a conflict - nb 1.5.2 doesn't support isNumeric
+	//$retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/jquery-1.5.2.js"></script>' . "\n";
+	$retval .= '<script type="text/javascript" src="/media/jui/js/jquery.min.js"></script>' . "\n";
+	$retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/sarissa.js"></script>' . "\n";
+	$retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/sarissa_ieemu_xpath.js"></script>' . "\n";
+	$retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/jquery.xslTransform.js"></script>' . "\n";
+	$retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/jquery-ui-1.8.11.custom/development-bundle/ui/jquery-ui-1.8.11.custom.js"></script>' . "\n";
+	$retval .= "<script type='text/javascript' src='" . $scriptprefix . "/templates/favouritest/stlib.js'></script>\n";
+	$retval .= '<script type="text/javascript">' . "\n";
+	//$retval .= '$(document).ready( function( ) { } );';
+	$retval .= '</script>' . "\n";
+}
+	$retval .= "<span>This is a test system for Admin Data Entry. It uses Facebook authentication &amp; ScoreTank authorisation.</span><p/>";
+	$retval .= "<span id='adminpage'></span>";
+	$retval .= "<div id='matchDialog' title='Match'></div>";
+	$retval .= "<div id='champDialog' title='Championship'></div>";
+	$retval .= "<div id='teamDialog' title='Team'></div>";
+	$retval .= "<span id='scriptprefix' style='display:none;'>" . $scriptprefix . "</div>";
   $retmenu = menuhead( ) .
 				  menuli( 101, 0, 'welcome', 'Welcome' ) .
 			 menufoot( 'create' );
 
-  return array( $retval, "", $retmenu );
+	$pagehead = pagehead2('Competition Admin', true);
+  	return array( $retval, $pagehead, $retmenu );
 }
 
 function getScriptPrefix( ) {

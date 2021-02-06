@@ -56,7 +56,7 @@ if(!( $_SERVER["REQUEST_SCHEME"] == "https" )) {
 								<label for="modlgn-passwd" class="element-invisible"><?php echo JText::_('JGLOBAL_PASSWORD'); ?>
 							</label>
 						</span>
-						<input id="modlgn-passwd" type="password" name="password" class="input-small" tabindex="0" size="18" placeholder="<?php echo JText::_('JGLOBAL_PASSWORD'); ?>" />
+						<input id="modlgn-passwd" type="password" name="password" class="input-small" tabindex="0" size="18" autocomplete="on" placeholder="<?php echo JText::_('JGLOBAL_PASSWORD'); ?>" />
 					</div>
 				<?php else : ?>
 					<label for="modlgn-passwd"><?php echo JText::_('JGLOBAL_PASSWORD'); ?></label>

@@ -7162,3 +7162,6 @@ jwt/src/ExpiredException.php
 jwt/src/JWK.php
 jwt/src/JWT.php
 jwt/src/SignatureInvalidException.php
+templates/favouritest/testjs.html
+templates/favouritest/testjs2.html
+templates/favouritest/testjs2.html

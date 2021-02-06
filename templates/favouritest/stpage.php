@@ -304,7 +304,7 @@ function MakeMatchEnt( $MatchRec, $sfmt, $lastdate ) {
   return( "      <tr class='match'><td>" .
                         $HText . "</td><td>" . $LinkStr . "</td><td>" .
                         $AText . "</td><td/><td>" . $Addn .
-                           "</td><td><input type='text' id='m" . $MatchRec["MatchRef"] . "' class='scoreentry' onchange='SendMatchRes( this );' title='$Tooltip' value='" . $MatchRec["HomeTeamRawScore"] . "' disabled></input><td id='statusm" . $MatchRec["MatchRef"] . "' style='font-style:italic;'></td></tr>\n");
+                           "</td></tr><tr><td colspan='5'><input type='text' id='m" . $MatchRec["MatchRef"] . "' class='scoreentry' onchange='SendMatchRes( this );' title='$Tooltip' value='" . $MatchRec["HomeTeamRawScore"] . "' disabled></input><td id='statusm" . $MatchRec["MatchRef"] . "' style='font-style:italic;'></td></tr>\n");
 //  return( "<tr><td>match</td></tr>" );
 }
 

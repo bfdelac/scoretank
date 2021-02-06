@@ -1,6 +1,6 @@
 
-jQuery( document ).ready( function( ) {
-  jQuery( '#matchDialog' ).html(
+function initialiseMatchDialog( ) {
+	$( '#matchDialog' ).html(
 		"<table border='0'>" +
 		  "<tr><td></td></tr>" +
 		  "<tr><td width='12%'></td><td>Home team:</td><td align='left' id='dlgHomeTd'></td></tr>" +
@@ -8,254 +8,270 @@ jQuery( document ).ready( function( ) {
 		  "<tr><td></td><td align='right'>Venue:</td><td align='left' id='dlgVenueTd' class='venuetd'></td></tr>" +
 		  "<tr><td></td><td align='right'>Scheduled:</td><td align='left' id='dlgSchedTd'><input type='text' id='dlgMatchdate'/><input type='text' size='6' MaxLength='6' id='dlgMatchtime'/></td></tr>" +
 		"</table>" );
-  jQuery( "#dlgMatchdate" ).datepicker( {
-    dateFormat: "D, d M yy"
-  } );
-  jQuery( '#matchDialog' ).dialog( {
-	autoOpen: false,
-	modal: true,
-	width: 600,
-	height: 350,
-	buttons: {
-	  "Ok": function( ) {
-		var hkey = 0;
-		var akey = 0;
-		var hd = '';
-		var hdr = 0;
-		var ad = '';
-		var adr = 0;
-    	var isfinal = ( jQuery( "#dlgHomeTd .dlgTeamSelSpan" ).css( "display" ) == 'none' );
-		if( isfinal ) {
-		  hd = jQuery( '#dlgHomeTd .dlgTeamDerivSelSpan select' ).val( );
-		  if( hd == 'F' ) {
-		    hdr = jQuery( '#dlgHomeTd .dlgTeamDerivSelRank .LadderPosSel' ).val( );
-		  } else {
-		    hdr = jQuery( '#dlgHomeTd .dlgTeamDerivSelRank .WinLose' ).val( );
-		  }
-		  ad = jQuery( '#dlgAwayTd .dlgTeamDerivSelSpan select' ).val( );
-		  if( ad == 'F' ) {
-		    adr = jQuery( '#dlgAwayTd .dlgTeamDerivSelRank .LadderPosSel' ).val( );
-		  } else {
-		    adr = jQuery( '#dlgAwayTd .dlgTeamDerivSelRank .WinLose' ).val( );
-		  }
-		  if( hd == '' ) {
-			window.alert( "Please select a Home formula" );
-			jQuery( '#dlgHomeTd .dlgTeamDerivSelSpan select' ).focus( );
-			return;
-		  }
-		  if( ad == '' ) {
-			window.alert( "Please select an Away formula" );
-			jQuery( '#dlgAwayTd .dlgTeamDerivSelSpan select' ).focus( );
-			return;
-		  }
-		  if( ( hdr == '' ) || ( hdr < 0 ) ) {
-		    window.alert( "Please select a Home formula team source" );
-			jQuery( '#dlgHomeTd .dlgTeamDerivSelRank select' ).focus( );
-			return;
-		  }
-		  if( ( adr == '' ) || ( adr < 0 ) ) {
-		    window.alert( "Please select an Away formula team source" );
-			jQuery( '#dlgAwayTd .dlgTeamDerivSelRank select' ).focus( );
-			return;
-		  }
-		  if( ( hd == ad ) && ( hdr == adr ) ) {
-		    window.alert( "Home and Away formulae must be different" );
-			return;
-		  }
-		} else {
-		  hkey = jQuery( '#dlgHomeTd .dlgTeamSelSpan select' ).val( );
-		  akey = jQuery( '#dlgAwayTd .dlgTeamSelSpan select' ).val( );
-		  if( hkey <= 0 ) {
-			window.alert( "Please select a Home team" );
-			jQuery( '#dlgHomeTd .dlgTeamSelSpan select' ).focus( );
-			return;
-		  }
-		  if( akey < 0 ) {
-			window.alert( "Please select an Away team" );
-			jQuery( '#dlgAwayTd .dlgTeamSelSpan select' ).focus( );
-			return;
-		  }
-		  if( hkey == akey ) {
-			window.alert( "Home and Away teams must be different" );
-			return;
-		  }
+	$( "#dlgMatchdate" ).datepicker( {
+    	dateFormat: "D, d M yy"
+  	} );
+	$( '#matchDialog' ).dialog( {
+		autoOpen: false,
+		modal: true,
+		width: 600,
+		height: 350,
+		buttons: {
+			'Ok': function( ) {
+				console.log("matchDialog Ok fired");
+if(false) {
+				if(!jQuery('#matchDialog').dialog('isOpen')) {
+					return;
+				}
+		
+				var hkey = 0;
+				var akey = 0;
+				var hd = '';
+				var hdr = 0;
+				var ad = '';
+				var adr = 0;
+				var isfinal = ( jQuery( "#dlgHomeTd .dlgTeamSelSpan" ).css( "display" ) == 'none' );
+				if( isfinal ) {
+				  hd = jQuery( '#dlgHomeTd .dlgTeamDerivSelSpan select' ).val( );
+				  if( hd == 'F' ) {
+					hdr = jQuery( '#dlgHomeTd .dlgTeamDerivSelRank .LadderPosSel' ).val( );
+				  } else {
+					hdr = jQuery( '#dlgHomeTd .dlgTeamDerivSelRank .WinLose' ).val( );
+				  }
+				  ad = jQuery( '#dlgAwayTd .dlgTeamDerivSelSpan select' ).val( );
+				  if( ad == 'F' ) {
+					adr = jQuery( '#dlgAwayTd .dlgTeamDerivSelRank .LadderPosSel' ).val( );
+				  } else {
+					adr = jQuery( '#dlgAwayTd .dlgTeamDerivSelRank .WinLose' ).val( );
+				  }
+				  if( hd == '' ) {
+					window.alert( "Please select a Home formula" );
+					jQuery( '#dlgHomeTd .dlgTeamDerivSelSpan select' ).focus( );
+					return;
+				  }
+				  if( ad == '' ) {
+					window.alert( "Please select an Away formula" );
+					jQuery( '#dlgAwayTd .dlgTeamDerivSelSpan select' ).focus( );
+					return;
+				  }
+				  if( ( hdr == '' ) || ( hdr < 0 ) ) {
+					window.alert( "Please select a Home formula team source" );
+					jQuery( '#dlgHomeTd .dlgTeamDerivSelRank select' ).focus( );
+					return;
+				  }
+				  if( ( adr == '' ) || ( adr < 0 ) ) {
+					window.alert( "Please select an Away formula team source" );
+					jQuery( '#dlgAwayTd .dlgTeamDerivSelRank select' ).focus( );
+					return;
+				  }
+				  if( ( hd == ad ) && ( hdr == adr ) ) {
+					  console.log("HA formulae");
+					window.alert( "Home and Away formulae must be different" );
+					return;
+				  }
+				} else {
+				  hkey = jQuery( '#dlgHomeTd .dlgTeamSelSpan select' ).val( );
+				  akey = jQuery( '#dlgAwayTd .dlgTeamSelSpan select' ).val( );
+				  if( hkey <= 0 ) {
+					window.alert( "Please select a Home team" );
+					jQuery( '#dlgHomeTd .dlgTeamSelSpan select' ).focus( );
+					return;
+				  }
+				  if( akey < 0 ) {
+					window.alert( "Please select an Away team" );
+					jQuery( '#dlgAwayTd .dlgTeamSelSpan select' ).focus( );
+					return;
+				  }
+				  if( hkey == akey ) {
+					console.log("HA teams");
+					window.alert( "Home and Away teams must be different" );
+					return;
+				  }
+				}
+				$venue = -1;
+				if( ( !isfinal ) && ( akey == 0 ) ) {
+				  akey = -1; //BYE special values
+				} else {
+				  $venue = jQuery( "#dlgVenueTd :selected" ).val( );
+				  if( $venue == "" ) {
+					window.alert( "Please select the venue" );
+					jQuery( '#dlgVenueTd select' ).focus( );
+					return;
+				  }
+				}
+		
+				if( jQuery( "#dlgMatchdate" ).val( ) == "" ) {
+				  window.alert( "Please select the match date" );
+				  jQuery( "#dlgMatchdate" ).datepicker( "show" );
+				}
+				if( jQuery( "#dlgMatchtime" ) == "" ) {
+				  window.alert( "Please select the match time" );
+				  return;
+				}
+				var sched = jQuery.datepicker.formatDate( "yy-mm-dd", jQuery( "#dlgMatchdate" ).datepicker( 'getDate' ) ) + " " + jQuery( "#dlgMatchtime" ).val( );
+		
+		//window.alert( "Posting" );
+				jQuery.post( jQuery("#scriptprefix").html() + "/xstlib.php", {
+					function: "UpdateMatch",
+					hkey: hkey,
+					akey: akey,
+					Venue: $venue,
+					Sched: sched,
+					mnum: document.matchnum,
+					rnum: document.roundnum,
+					chkey: jQuery( '#ChampSel' ).val( ),
+					hd: hd,
+					hdr: hdr,
+					ad: ad,
+					adr: adr
+				  },
+				  function( xData ) {
+						jQuery( '#matchDialog' ).dialog( 'close' );
+					jQuery( "#ChampFixture" ).getTransform( jQuery("#scriptprefix").html() + "/xfixture.xsl",
+			jQuery("#scriptprefix").html() + "/xteam.php?editmatch=1&fixt=" + jQuery( '#ChampSel' ).val( ) );
+					jQuery.get( jQuery("#scriptprefix").html() + "/xteam.php?showvenues=1&champ=" + jQuery( '#ChampSel' ).val( ),
+					  function( xData ) {
+					setupInlineMatch( xData );
+					  } );
+				  },
+				  "xml"
+				);
+}
+			},
+			'Cancel': function( ) {
+				console.log("matchDialog Close fired");
+				jQuery( '#matchDialog' ).dialog( 'close' );
+				console.log("matchDialog Close finished");
+			}
 		}
-		$venue = -1;
-	    if( ( !isfinal ) && ( akey == 0 ) ) {
-		  akey = -1; //BYE special values
-		} else {
-		  $venue = jQuery( "#dlgVenueTd :selected" ).val( );
-		  if( $venue == "" ) {
-			window.alert( "Please select the venue" );
-		    jQuery( '#dlgVenueTd select' ).focus( );
-			return;
-		  }
-		}
+	} );
+}
 
-		if( jQuery( "#dlgMatchdate" ).val( ) == "" ) {
-		  window.alert( "Please select the match date" );
-	      jQuery( "#dlgMatchdate" ).datepicker( "show" );
-		}
-		if( jQuery( "#dlgMatchtime" ) == "" ) {
-	      window.alert( "Please select the match time" );
-	      return;
-	    }
-		var sched = jQuery.datepicker.formatDate( "yy-mm-dd", jQuery( "#dlgMatchdate" ).datepicker( 'getDate' ) ) + " " + jQuery( "#dlgMatchtime" ).val( );
-
-//window.alert( "Posting" );
-		jQuery.post( jQuery("#scriptprefix").html() + "/xstlib.php", {
-		    function: "UpdateMatch",
-			hkey: hkey,
-			akey: akey,
-			Venue: $venue,
-			Sched: sched,
-			mnum: document.matchnum,
-			rnum: document.roundnum,
-			chkey: jQuery( '#ChampSel' ).val( ),
-			hd: hd,
-			hdr: hdr,
-			ad: ad,
-			adr: adr
-		  },
-		  function( xData ) {
-//window.alert( "returned: " + jQuery.xsl.serialize( xData ) );
-	    	    jQuery( '#matchDialog' ).dialog( 'close' );
-		    jQuery( "#ChampFixture" ).getTransform( jQuery("#scriptprefix").html() + "/xfixture.xsl",
-    jQuery("#scriptprefix").html() + "/xteam.php?editmatch=1&fixt=" + jQuery( '#ChampSel' ).val( ) );
-		    jQuery.get( jQuery("#scriptprefix").html() + "/xteam.php?showvenues=1&champ=" + jQuery( '#ChampSel' ).val( ),
-		      function( xData ) {
-			setupInlineMatch( xData );
-//window.alert( "returned: " + $.xsl.serialize( xData ) );
-		      } );
-	  	    //initFixt( xData );
-		  },
-		  "xml"
-		);
-	  },
-	  "Cancel": function( ) {
-	    jQuery( '#matchDialog' ).dialog( 'close' );
-	  }
-	}
-  } );
-  jQuery( '#champDialog' ).html( "<table border='0'>" +
-		"<tr><td></td></tr>" +
-		"<tr><td width='10%'></td><td>New&nbsp;season&nbsp;name:</td><td id='seasonTd' style='text-align:left;'><input type='text' maxlength='80' style='width:20em;' id='NewSeasonName'></input></td></tr>" +
-		"<tr><td></td><td>Roll over teams?</td><td id='seasonTd' style='text-align:left;'><input type='checkbox' id='ROteams'></input></td></tr>" +
-		"<tr><td></td><td>Season start date:<br/>(only if rolling over matches)</td><td id='SeasonStartTd' style='text-align:left;'><input type='text' id='SStartDt'></input></td></tr>" +
+function initialiseChampDialog() {
+	$( '#champDialog' ).html(
+		"<table border='0'>" +
+			"<tr><td></td></tr>" +
+			"<tr><td width='10%'></td><td>New&nbsp;season&nbsp;name:</td><td id='seasonTd' style='text-align:left;'><input type='text' maxlength='80' style='width:20em;' id='NewSeasonName'></input></td></tr>" +
+			"<tr><td></td><td>Roll over teams?</td><td id='seasonTd' style='text-align:left;'><input type='checkbox' id='ROteams'></input></td></tr>" +
+			"<tr><td></td><td>Season start date:<br/>(only if rolling over matches)</td><td id='SeasonStartTd' style='text-align:left;'><input type='text' id='SStartDt'></input></td></tr>" +
 		"</table>" );
-  jQuery( "#SStartDt" ).datepicker( {
-    dateFormat: "D, d M yy"
-  } );
-  jQuery( '#champDialog' ).dialog( {
-	autoOpen: false,
-	modal: true,
-	width: 600,
-	height: 400,
-	buttons: {
-	  "Ok": function( ) {
-		var SeasonName = jQuery.trim( jQuery( '#NewSeasonName' ).val( ) );
-		if( SeasonName.length <= 0 ) {
-		  window.alert( "Please enter a name for the new season" );
-		  return;
-		}
-		var StartDt = jQuery( '#SStartDt' ).val( );
-		if( StartDt.length > 0 ) {
-		  StartDt = jQuery.datepicker.formatDate( "yy-mm-dd", jQuery( "#SStartDt" ).datepicker( 'getDate' ) );
-		}
-		var ROTeam = jQuery( "#ROteams:checked" ).length;
-//window.alert( "roc: " + $( '#ChampSel' ).val( ) + ", season: " + SeasonName + ", SDt: " + StartDt + ", ROT = " + ROTeam );
-//return;
-		jQuery.post( jQuery("#scriptprefix").html() + "/xstlib.php", {
-		    function: "RollOver",
-			rochampkey: jQuery( '#ChampSel' ).val( ),
-			season: SeasonName,
-			startdt: StartDt,
-			roteams: ROTeam
-		  },
-		  function( xData ) {
-			window.alert( "Championship rolled over" );
-//window.alert( "returned: " + $.xsl.serialize( xData ) );
-//window.alert( "got back xD" );
-			def = xData.documentElement.getElementsByTagName( "ro" );
-			defch = -1;
-			if( def.length ) {
-			  defch = def[0].getAttribute( "ChKey" );
+	$( "#SStartDt" ).datepicker( {
+		dateFormat: "D, d M yy"
+	} );
+	$( '#champDialog' ).dialog( {
+		autoOpen: false,
+		modal: true,
+		width: 600,
+		height: 400,
+		buttons: {
+			"Ok": function( ) {
+				var SeasonName = jQuery.trim( jQuery( '#NewSeasonName' ).val( ) );
+				if( SeasonName.length <= 0 ) {
+					window.alert( "Please enter a name for the new season" );
+					return;
+				}
+				var StartDt = $akey( '#SStartDt' ).val( );
+				if( StartDt.length > 0 ) {
+					StartDt = jQuery.datepicker.formatDate( "yy-mm-dd", $( "#SStartDt" ).datepicker( 'getDate' ) );
+				}
+				var ROTeam = $( "#ROteams:checked" ).length;
+				jQuery.post( $("#scriptprefix").html() + "/xstlib.php", {
+						function: "RollOver",
+						rochampkey: $( '#ChampSel' ).val( ),
+						season: SeasonName,
+						startdt: StartDt,
+						roteams: ROTeam
+					},
+					function( xData ) {
+						window.alert( "Championship rolled over" );
+						def = xData.documentElement.getElementsByTagName( "ro" );
+						defch = -1;
+						if( def.length ) {
+							defch = def[0].getAttribute( "ChKey" );
+						}
+						$( '#champDialog' ).dialog( 'close' );
+						$( '#adminpage' ).getTransform( $("#scriptprefix").html() + "/xstlib.xsl", $("#scriptprefix").html() + "/xstlib.php?listchamps=1&default=" + defch );
+					//			$( "#ChampFixture" ).getTransform( "/xfixture.xsl", "/xteam.php?editmatch=1&fixt=" + $( '#ChampSel' ).val( ) );
+						changeChamp( $( '#ChampSel' ) );
+					},
+					"xml"
+				);
+			},
+			"Cancel": function( ) {
+				$( '#champDialog' ).dialog( 'close' );
 			}
-	    	jQuery( '#champDialog' ).dialog( 'close' );
-			//window.alert( defch );
-		    jQuery( '#adminpage' ).getTransform( jQuery("#scriptprefix").html() + "/xstlib.xsl", jQuery("#scriptprefix").html() + "/xstlib.php?listchamps=1&default=" + defch );
-//			$( "#ChampFixture" ).getTransform( "/xfixture.xsl", "/xteam.php?editmatch=1&fixt=" + $( '#ChampSel' ).val( ) );
-			changeChamp( jQuery( '#ChampSel' ) );
-		  },
-		  "xml"
-		);
-	  },
-	  "Cancel": function( ) {
-	    jQuery( '#champDialog' ).dialog( 'close' );
-	  }
-	}
-  } );
-  jQuery( '#teamDialog' ).html(
-      "<table border='0'>" +
-	   "<tr><td></td></tr>" +
-	   "<tr><td width='10%'>&nbsp;</td><td style='text-align:right;'>Team&nbsp;Name</td><td id='teamNameTd' style='text-align:left;'><input type='text' maxlength='80' style='width:20em;' id='teamName'></input></td></tr>" +
-	   "<tr><td>&nbsp;</td><td style='text-align:right;'>Team&nbsp;Home&nbsp;Ground</td><td style='text-align:left;' id='teamHGtd'><input type='hidden' id='teamGroundKey'></input><input type='hidden' id='teamGround'>207</input><button id='selTeam'>&#9660;</button></td></tr>" +
-			//teamGroundKey: $( "#teamGround" ).val( ),
-	   "<tr><td>&nbsp;</td><td style='text-align:right;'>Home&nbsp;Ground&nbsp;Address</td><td style='text-align:left;'><textarea id='groundAddr' readonly='readonly'></textarea><input type='hidden' id='groundAddrIH></input></td></tr>" +
-	  "</table>" );
-
-  jQuery( "#teamDialog" ).dialog( {
-	autoOpen: false,
-	modal: true,
-	width: 600,
-	height: 400,
-	buttons: {
-	  "Ok": function( ) {
-		var teamName = jQuery.trim( jQuery( '#teamName' ).val( ) );
-		if( teamName.length <= 0 ) {
-		  window.alert( "Please enter a name for the new team" );
-		  return;
 		}
-                var hg = jQuery( "#teamHGtd select option:selected" ).val( );
-                if( ( hg == "" ) || ( hg < 0 ) ) {
-		  window.alert( "Please select a home ground" );
-		  return;
-		}
-		jQuery.post( jQuery("#scriptprefix").html() + "/xteam.php", {
-			function: "AddTeam",
-			ChKey: jQuery( '#ChampSel' ).val( ),
-			x: "xxx",
-			teamGroundKey: hg,
-			teamName: teamName,
-	//		teamGroundKey: $( "#teamGround" ).val( ),
-	//		teamGroundKey: $( "#teamGroundKey" ).val( )
-			groundAddr: jQuery( "#groundAddr" ).val( )
-		  },
-		  function( xData ) {
-		    var jData = jQuery( xData );
-			//window.alert( "returned: " + $.xsl.serialize( xData ) );
-			if( jData.find( "newTeam" ) ) {
-			  jQuery( "#" + document.changingTeam ).getTransform( jQuery("#scriptprefix").html() + "/xteam.xsl", xData );
-			  jData.find( "newTeam" ).each( function( ) {
-			    jQuery( "#" + document.changingTeam + " select" ).val( jQuery( this ).attr( "key" ) );
-			  } );
-			  jQuery( "#dlgMatchdate" ).show( );
-    			  jQuery( "#dlgMatchtime" ).show( );
-			  jQuery( "#teamDialog" ).dialog( 'close' );
-            } else {
-			  window.alert( xData.xml );
-			}
-		  },
-		  "xml"
-		);
-	  },
-	  "Cancel": function( ) {
-	    jQuery( "#teamDialog" ).dialog( 'close' );
-	  }
-	}
-  } );
+	});
+}
 
-} );
+function initialiseTeamDialog( ) {
+	jQuery( '#teamDialog' ).html(
+		"<table border='0'>" +
+		 "<tr><td></td></tr>" +
+		 "<tr><td width='10%'>&nbsp;</td><td style='text-align:right;'>Team&nbsp;Name</td><td id='teamNameTd' style='text-align:left;'><input type='text' maxlength='80' style='width:20em;' id='teamName'></input></td></tr>" +
+		 "<tr><td>&nbsp;</td><td style='text-align:right;'>Team&nbsp;Home&nbsp;Ground</td><td style='text-align:left;' id='teamHGtd'><input type='hidden' id='teamGroundKey'></input><input type='hidden' id='teamGround'>207</input><button id='selTeam'>&#9660;</button></td></tr>" +
+			  //teamGroundKey: $( "#teamGround" ).val( ),
+		 "<tr><td>&nbsp;</td><td style='text-align:right;'>Home&nbsp;Ground&nbsp;Address</td><td style='text-align:left;'><textarea id='groundAddr' readonly='readonly'></textarea><input type='hidden' id='groundAddrIH></input></td></tr>" +
+		"</table>" );
+  
+	jQuery( "#teamDialog" ).dialog( {
+	  autoOpen: false,
+	  modal: true,
+	  width: 600,
+	  height: 400,
+	  buttons: {
+		"Ok": function( ) {
+		  var teamName = jQuery.trim( jQuery( '#teamName' ).val( ) );
+		  if( teamName.length <= 0 ) {
+			window.alert( "Please enter a name for the new team" );
+			return;
+		  }
+				  var hg = jQuery( "#teamHGtd select option:selected" ).val( );
+				  if( ( hg == "" ) || ( hg < 0 ) ) {
+			window.alert( "Please select a home ground" );
+			return;
+		  }
+		  jQuery.post( jQuery("#scriptprefix").html() + "/xteam.php", {
+			  function: "AddTeam",
+			  ChKey: jQuery( '#ChampSel' ).val( ),
+			  x: "xxx",
+			  teamGroundKey: hg,
+			  teamName: teamName,
+	  //		teamGroundKey: $( "#teamGround" ).val( ),
+	  //		teamGroundKey: $( "#teamGroundKey" ).val( )
+			  groundAddr: jQuery( "#groundAddr" ).val( )
+			},
+			function( xData ) {
+			  var jData = jQuery( xData );
+			  //window.alert( "returned: " + $.xsl.serialize( xData ) );
+			  if( jData.find( "newTeam" ) ) {
+				jQuery( "#" + document.changingTeam ).getTransform( jQuery("#scriptprefix").html() + "/xteam.xsl", xData );
+				jData.find( "newTeam" ).each( function( ) {
+				  jQuery( "#" + document.changingTeam + " select" ).val( jQuery( this ).attr( "key" ) );
+				} );
+				jQuery( "#dlgMatchdate" ).show( );
+					jQuery( "#dlgMatchtime" ).show( );
+				jQuery( "#teamDialog" ).dialog( 'close' );
+			  } else {
+				window.alert( xData.xml );
+			  }
+			},
+			"xml"
+		  );
+		},
+		"Cancel": function( ) {
+		  jQuery( "#teamDialog" ).dialog( 'close' );
+		}
+	  }
+	} );  
+}
+
+function initialiseCompAdmin() {
+	console.log("initialiseCompAdmin");
+	initialiseMatchDialog( );
+//	initialiseChampDialog( );
+//	initialiseTeamDialog( );
+};
 
 function changeTeam( selCtrl ) {
 //window.alert( "ph: " + $(selCtrl).parent( ).parent( ).parent( ).html( ) );
