@@ -506,7 +506,6 @@ function initFixt( xdata ) {
   jQuery.get( jQuery("#scriptprefix").html() + "/xteam.php?showvenues=1&champ=" + jQuery( '#ChampSel' ).val( ),
 		  function( xData ) {
 		    setupInlineMatch( xData );
-//window.alert( "returned: " + $.xsl.serialize( xData ) );
 		  } );
 //  $( "#dlgHomeTd" ).getTransform( "/xteam.xsl", "/xteam.php?champ=" + $( '#ChampSel' ).val( ) );
 //  $( "#dlgAwayTd" ).getTransform( "/xteam.xsl", "/xteam.php?champ=" + $( '#ChampSel' ).val( ) );
@@ -516,19 +515,14 @@ function initFixt( xdata ) {
 }
 
 function loadPage( ) {
-//  window.alert( "LP" );
-  //FB.api( '/me', function( response ) {
- //   alert( response.name );
-//  } );
-
-//window.alert( "spx" );
-  jQuery( '#adminpage' ).text( "Now Loading..." );
-//window.alert( "sp: " + jQuery("$scriptprefix").html() );
-  jQuery( '#adminpage' ).getTransform( jQuery("#scriptprefix").html() + "/xstlib.xsl",
-                                       jQuery("#scriptprefix").html() + "/xstlib.php?listchamps=1" );
-  //jQuery( '#adminpage' ).getTransform( "/xstlib.xsl",
-  //                                     "/xstlib.php?listchamps=1" );
-
+	$( '#adminpage' ).text( "Now Loading..." );
+	$.get($("#scriptprefix").html() + "/xstlib.xsl", function(compsxsl) {
+			console.log('got xsl');
+			$.get($("#scriptprefix").html() + "/xstlib.php?listchamps=1", function(compsxml) {
+					console.log('got xml');
+					$('#adminpage').getTransform(compsxsl, compsxml);
+			});
+		}, "xml");
 }
 
 function newRound( ) {
