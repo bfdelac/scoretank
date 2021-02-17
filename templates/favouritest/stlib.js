@@ -1,5 +1,6 @@
 
 function initialiseMatchDialog( ) {
+	console.log("pophtml");
 	$( '#matchDialog' ).html(
 		"<table border='0'>" +
 		  "<tr><td></td></tr>" +
@@ -8,9 +9,12 @@ function initialiseMatchDialog( ) {
 		  "<tr><td></td><td align='right'>Venue:</td><td align='left' id='dlgVenueTd' class='venuetd'></td></tr>" +
 		  "<tr><td></td><td align='right'>Scheduled:</td><td align='left' id='dlgSchedTd'><input type='text' id='dlgMatchdate'/><input type='text' size='6' MaxLength='6' id='dlgMatchtime'/></td></tr>" +
 		"</table>" );
+	console.log("matchdate");
 	$( "#dlgMatchdate" ).datepicker( {
     	dateFormat: "D, d M yy"
   	} );
+	console.log("dialog");
+
 	$( '#matchDialog' ).dialog( {
 		autoOpen: false,
 		modal: true,
@@ -269,8 +273,8 @@ function initialiseTeamDialog( ) {
 function initialiseCompAdmin() {
 	console.log("initialiseCompAdmin");
 	initialiseMatchDialog( );
-//	initialiseChampDialog( );
-//	initialiseTeamDialog( );
+	initialiseChampDialog( );
+	initialiseTeamDialog( );
 };
 
 function changeTeam( selCtrl ) {

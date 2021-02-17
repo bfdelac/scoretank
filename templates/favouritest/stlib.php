@@ -29,9 +29,6 @@ function pagehead( $title, $showjq = true ) {
 '<title>' . $title . '</title>' . "\n" .
 //'<link href="/templates/favouritest/favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />' . "\n" .
 //'<script src="/media/system/js/core.js" type="text/javascript"></script>' . "\n" .
-//'<script src="/media/system/js/mootools-core.js" type="text/javascript"></script>' . "\n" .
-//'<script src="/media/system/js/caption.js" type="text/javascript"></script>' . "\n" .
-//'<script src="/media/system/js/mootools-more.js" type="text/javascript"></script>' . "\n" .
 //'<script src="/templates/favouritest/javascript/md_stylechanger.js" type="text/javascript" defer="defer"></script>' . "\n";
 '<link href="' . $_SERVER["REQUEST_URI"] . '" rel="canonical" />' . "\n" .
 '<link href="' . $linkbase . '/templates/favouritest/favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />' . "\n" .
@@ -42,10 +39,7 @@ if( $showjq ) {
 	'<script src="' . $linkbase . '/media/jui/js/jquery.min.js" type="text/javascript"></script>' . "\n" .
 	'<script src="' . $linkbase . '/media/jui/js/jquery-noconflict.js" type="text/javascript"></script>' . "\n" .
 	'<script src="' . $linkbase . '/media/jui/js/jquery-migrate.min.js" type="text/javascript"></script>' . "\n" .
-	'<script src="' . $linkbase . '/media/system/js/caption.js" type="text/javascript"></script>' . "\n" .
-	'<script src="' . $linkbase . '/media/jui/js/bootstrap.min.js" type="text/javascript"></script>' . "\n" .
-	'<script type="text/javascript">' . "\n" .
-	'jQuery(window).on(\'load\', function() { new JCaption(\'img.caption\');' . "\n" . '});' . "\n" . '</script>' . "\n";
+	'<script src="' . $linkbase . '/media/jui/js/bootstrap.min.js" type="text/javascript"></script>' . "\n";
 }
   return( $retval );
 
@@ -880,15 +874,10 @@ function fixt( $ent = 0 ) {
 		$retval .= '</script>' . "\n";
 	} else if( $ent == 1 ) {
 		$user = JFactory::getUser();
-		$jwt = 0;	//	JWT::encode(array( "userid" => $user->id, "champ" => $ChKey, "exp" => (time() + (15 * 60)) ), jwt_secret( ));
-
 		$retval .= '<script type="text/javascript">' . "\n";
 		$retval .= '$(document).ready( function( ) { jQuery( ".scoreentry" ).removeAttr("disabled"); } );';
 		$retval .= 'function SendMatchRes( inputfld ) { SendMatchResLib( inputfld ); }';
 		$retval .= '</script>' . "\n";
-			
-//		$retval .= '<input type="button" name="test" value="test1" onclick="console.log(' . "'testbutton'".
-//				 '); sendTest( \'' . $jwt . '\' );"></input>';
   	}
   }
 
@@ -1289,6 +1278,7 @@ function profileselector( ) {
 function pagehead2( $title, $showjq = true ) {
 	$path_parts = pathinfo( $_SERVER["PHP_SELF"] );
 	$linkbase = "/scoretank";
+	$user = NULL;
 	$retval =
 	'<base href="' . $_SERVER["REQUEST_SCHEME"] . '://' . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"] . '" />' . "\n" .
 	'<meta http-equiv="content-type" content="text/html; charset=utf-8" />' . "\n" .
@@ -1302,25 +1292,25 @@ function pagehead2( $title, $showjq = true ) {
 	'<link rel="stylesheet" href="' . $linkbase . '/media/jui/css/bootstrap.min.css" type="text/css"/>' . "\n" .
 	'<link rel="stylesheet" href="' . $linkbase . '/media/jui/css/bootstrap-responsive.css" type="text/css"/>' . "\n";
 	if( $showjq ) {
-		$retval .= '<script type="text/javascript" src="' . $linkbase . '/media/jui/js/jquery.min.js"></script>' . "\n";
+		$retval .= '<link rel="stylesheet" href="' . $linkbase . '/jqlib/jquery-ui-themes-1.12.1/themes/ui-lightness/jquery-ui.min.css">' . "\n";
+		$retval .= '<script type="text/javascript" src="' . $linkbase . '/jqlib/jq3.5.1/jquery-3.5.1.min.js"></script>' . "\n";
 		$retval .= '<script type="text/javascript" src="' . $linkbase . '/jqlib/sarissa.js"></script>' . "\n";
 		$retval .= '<script type="text/javascript" src="' . $linkbase . '/jqlib/sarissa_ieemu_xpath.js"></script>' . "\n";
 		$retval .= '<script type="text/javascript" src="' . $linkbase . '/jqlib/jquery.xslTransform.js"></script>' . "\n";
-		$retval .= '<script type="text/javascript" src="' . $linkbase . '/jqlib/jquery-ui-1.8.11.custom/development-bundle/ui/jquery-ui-1.8.11.custom.js"></script>' . "\n";
+		$retval .= '<script type="text/javascript" src="' . $linkbase . '/jqlib/jquery-ui-1.12.1/jquery-ui.min.js"></script>' . "\n";
 		$retval .= "<script type='text/javascript' src='" . $linkbase . "/templates/favouritest/stlib.js'></script>\n";
 	
-		// $retval .=
-		// '<script src="' . $linkbase . '/media/jui/js/jquery.min.js" type="text/javascript"></script>' . "\n" .
-		// '<script src="' . $linkbase . '/media/jui/js/jquery-noconflict.js" type="text/javascript"></script>' . "\n" .
-		// '<script src="' . $linkbase . '/media/jui/js/jquery-migrate.min.js" type="text/javascript"></script>' . "\n" .
-		$retval .= '<script src="' . $linkbase . '/media/system/js/caption.js" type="text/javascript"></script>' . "\n";
-		// '<script src="' . $linkbase . '/media/jui/js/bootstrap.min.js" type="text/javascript"></script>' . "\n" .
+//		$retval .= '<script src="' . $linkbase . '/media/jui/js/jquery-noconflict.js" type="text/javascript"></script>' . "\n";
 		$retval .= '<script type="text/javascript">' . "\n";
 		$retval .= '  $(document).ready( function() { ' .
 			' console.log("docready"); ' .
-			' initialiseCompAdmin(); ' .
-			' });' . "\n";
-		$retval .= 'jQuery(window).on(\'load\', function() { new JCaption(\'img.caption\');' . "\n" . '});' . "\n";
+			' initialiseCompAdmin(); ';
+		$user = JFactory::getUser();
+		  
+		if ($user->id > 0) {
+			$retval .= 'loadPage( ); ';
+		}
+		$retval .= ' });' . "\n";
 		$retval .= '</script>' . "\n";
 	}
 	return( $retval );
@@ -1346,6 +1336,7 @@ if(false) {
 	// note! 27 Aug 2016... this jQuery call is a 2nd one, as /media/jui/js/jquery.min.js is already loaded. Let's aim at cleaning this up in future!
 	// this causes a conflict - nb 1.5.2 doesn't support isNumeric
 	//$retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/jquery-1.5.2.js"></script>' . "\n";
+
 	$retval .= '<script type="text/javascript" src="/media/jui/js/jquery.min.js"></script>' . "\n";
 	$retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/sarissa.js"></script>' . "\n";
 	$retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/sarissa_ieemu_xpath.js"></script>' . "\n";
@@ -1356,7 +1347,7 @@ if(false) {
 	//$retval .= '$(document).ready( function( ) { } );';
 	$retval .= '</script>' . "\n";
 }
-	$retval .= "<span>This is a test system for Admin Data Entry. It uses Facebook authentication &amp; ScoreTank authorisation.</span><p/>";
+	$retval .= "<span>This is a test system for Admin Data Entry. It uses Joomla authentication &amp; ScoreTank authorisation. Please log in above, to be able to administer competitions.</span><p/>";
 	$retval .= "<span id='adminpage'></span>";
 	$retval .= "<div id='matchDialog' title='Match'></div>";
 	$retval .= "<div id='champDialog' title='Championship'></div>";
