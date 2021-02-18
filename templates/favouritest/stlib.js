@@ -313,20 +313,18 @@ function changeTeam( selCtrl ) {
 	jQuery( "#teamDialog #teamHGtd" ).getTransform( jQuery("#scriptprefix").html() + "/xvenue.xsl", document.venData );
 	jQuery( "#teamDialog" ).dialog( 'open' );
       } );
-
-  //jQuery( "#teamDialog .teamHGtd" ).html( "
 }
 
 function changeChamp( selCtrl ) {
-  var selVal = jQuery( '#ChampSel' ).val( );
-  if( selVal > 0 ) {
-	jQuery( '#rollOver' ).attr( 'disabled', '' );
-  } else {
-	jQuery( '#rollOver' ).attr( 'disabled', 'disabled' );
-  }
-  jQuery.get( jQuery("#scriptprefix").html() + "/xteam.php?editmatch=1&fixt=" + jQuery( '#ChampSel' ).val( ),
+	var selVal = $( '#ChampSel' ).val( );
+	if( selVal > 0 ) {
+		$( '#rollOver' ).removeAttr( 'disabled' );
+	} else {
+		$( '#rollOver' ).attr( 'disabled', 'disabled' );
+	}
+	$.get( $("#scriptprefix").html() + "/xteam.php?editmatch=1&fixt=" + $( '#ChampSel' ).val( ),
 		function( data, textStatus, jqXHR ) {
-		  initFixt( data );
+			initFixt( data );
 		} );
 }
 
@@ -475,43 +473,43 @@ window.XXfbAsyncInit = function( ) {
 }
 
 function setupInlineMatch( xData ) {
-  var sp = jQuery("#scriptprefix").html();
-  jQuery( "#dlgHomeTd" ).getTransform( sp + "/xteam.xsl", xData );
-  jQuery( "#dlgAwayTd" ).getTransform( sp + "/xteam.xsl", xData );
-  jQuery( "#dlgAwayTd .dlgTeamSelSpan" ).find( "select" ).append( jQuery( '<option>', { value: 0, text: 'Bye' } ) );
-  jQuery( "#dlgVenueTd" ).getTransform( sp + "/xvenue.xsl", xData );
-  jQuery( "#hteam" ).getTransform( sp + "/xteam.xsl", xData );
-  jQuery( "#ateam" ).getTransform( sp + "/xteam.xsl", xData );
-  jQuery( "#ateam select" ).append( jQuery( '<option>', { value: 0, text: 'Bye' } ) );
-  jQuery( "#venue" ).getTransform( sp + "/xvenue.xsl", xData );
-  jQuery( "#matchdate" ).datepicker( {
-    dateFormat: "D, d M yy"
-  } );
-  if( jQuery( ".displayrow" ).length > 0 ) {
-    jQuery( "#roundnum" ).val( jQuery( ".roundnum:last" ).text( ) );
-    jQuery( "#matchnum" ).val( Number( jQuery( ".matchnum:last" ).text( ) ) + 1 );
-	//window.alert( new Date( $( ".textdate:last" ).text( ) ) );
-    jQuery( "#matchdate" ).datepicker( 'setDate', new Date( jQuery( ".textdate:last" ).text( ) ) );
-    jQuery( "#matchtime" ).val( jQuery( ".texttime:last" ).text( ) );
-  } else {
-    jQuery( "#roundnum" ).val( 1 );
-    jQuery( "#matchnum" ).val( 1 );
-  }
+	console.log("sIF1");
+	var sp = $("#scriptprefix").html();
+	$( "#dlgHomeTd" ).getTransform( sp + "/xteam.xsl", xData );
+	$( "#dlgAwayTd" ).getTransform( sp + "/xteam.xsl", xData );
+	$( "#dlgAwayTd .dlgTeamSelSpan" ).find( "select" ).append( $( '<option>', { value: 0, text: 'Bye' } ) );
+	$( "#dlgVenueTd" ).getTransform( sp + "/xvenue.xsl", xData );
+	$( "#hteam" ).getTransform( sp + "/xteam.xsl", xData );
+	$( "#ateam" ).getTransform( sp + "/xteam.xsl", xData );
+	$( "#ateam select" ).append( $( '<option>', { value: 0, text: 'Bye' } ) );
+	$( "#venue" ).getTransform( sp + "/xvenue.xsl", xData );
+	$( "#matchdate" ).datepicker( {
+		dateFormat: "D, d M yy"
+	} );
+	if( $( ".displayrow" ).length > 0 ) {
+		$( "#roundnum" ).val( $( ".roundnum:last" ).text( ) );
+		$( "#matchnum" ).val( Number( $( ".matchnum:last" ).text( ) ) + 1 );
+		//window.alert( new Date( $( ".textdate:last" ).text( ) ) );
+		$( "#matchdate" ).datepicker( 'setDate', new Date( $( ".textdate:last" ).text( ) ) );
+		$( "#matchtime" ).val( $( ".texttime:last" ).text( ) );
+	} else {
+		$( "#roundnum" ).val( 1 );
+		$( "#matchnum" ).val( 1 );
+	}
+	console.log("sIF9");
 }
 
 function initFixt( xdata ) {
-  document.xdata = xdata;
-//window.alert( "iF" );
-  jQuery( "#ChampFixture" ).getTransform( jQuery("#scriptprefix").html() + "/xfixture.xsl", jQuery.xsl.serialize( xdata ) );
-  jQuery.get( jQuery("#scriptprefix").html() + "/xteam.php?showvenues=1&champ=" + jQuery( '#ChampSel' ).val( ),
-		  function( xData ) {
-		    setupInlineMatch( xData );
-		  } );
-//  $( "#dlgHomeTd" ).getTransform( "/xteam.xsl", "/xteam.php?champ=" + $( '#ChampSel' ).val( ) );
-//  $( "#dlgAwayTd" ).getTransform( "/xteam.xsl", "/xteam.php?champ=" + $( '#ChampSel' ).val( ) );
-//  $( "#hteam" ).getTransform( "/xteam.xsl", "/xteam.php?champ=" + $( "#champkey" ).val( ) );
-//  $( "#ateam" ).getTransform( "/xteam.xsl", "/xteam.php?champ=" + $( "#champkey" ).val( ) );
-//  $( "#venue" ).getTransform( "/xvenue.xsl", "/xteam.php?champ=" +  $( "#champkey" ).val( ) + "&showvenues=1" );
+	document.xdata = xdata;
+
+	$.get($("#scriptprefix").html() + "/xfixture.xsl", function(fixtXsl) {
+		$( "#ChampFixture" ).getTransform(fixtXsl, $.xsl.serialize(xdata));
+	});
+
+	$.get( $("#scriptprefix").html() + "/xteam.php?showvenues=1&champ=" + $( '#ChampSel' ).val( ),
+			function( xData ) {
+				setupInlineMatch( xData );
+		} );
 }
 
 function loadPage( ) {

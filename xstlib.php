@@ -1,10 +1,39 @@
 <?php
 
-  header( "Expires: -1" );
-  header( "Content-type:text/xml" );
+	// Joomla links
+	define('JOOMLA_MINIMUM_PHP', '5.3.10');
+	if (version_compare(PHP_VERSION, JOOMLA_MINIMUM_PHP, '<'))
+	{
+		die('Your host needs to use PHP ' . JOOMLA_MINIMUM_PHP . ' or higher to run this version of Joomla!');
+	}
+	$startTime = microtime(1);
+	$startMem  = memory_get_usage();
+	define('_JEXEC', 1);
+	if (file_exists(__DIR__ . '/defines.php'))
+	{
+		include_once __DIR__ . '/defines.php';
+	}
+	if (!defined('_JDEFINES'))
+	{
+		define('JPATH_BASE', __DIR__);
+		require_once JPATH_BASE . '/includes/defines.php';
+	}
+	require_once JPATH_BASE . '/includes/framework.php';
 
-  include "fb/stpage.php";
-  include "fb/facebook.php";
+	// Set profiler start time and memory usage and mark afterLoad in the profiler.
+	JDEBUG ? JProfiler::getInstance('Application')->setStart($startTime, $startMem)->mark('afterLoad') : null;
+
+	// Instantiate the application.
+	$app = JFactory::getApplication('site');
+
+	$document = JFactory::getDocument();
+	$document->setMimeEncoding('application/xml');
+  
+//	header( "Expires: -1" );
+//	header( "Content-type:text/xml" );
+
+	include "fb/stpage.php";
+	include "fb/facebook.php";
 
 function RollOverCh( $ROChKey, $season, $fbid, $stdb, $doc, $root, $roteams ) {
   $query = "SELECT DISTINCTROW Sport.SportName, Sport.SportKey, SportingBody.SBAbbrev, SportingBody.SBSportingBodyName, Grade.GradeName, Season.SeasonKey, Season.SeasonName, SportingBody.SBTZ, Championship.Status, Grade.GradeKey, Contest.ContestKey, ChampData.DataKey, NumFinalists, Competition.CompKey, Display " .
@@ -409,33 +438,40 @@ function myserror( $doc, $root, $query, $str, $mysqli ) {
   return( $doc->saveXML( ) );
 }
 
-  $stdb = sticonnect( );
-  $fbid = 0;
-  $fbid = fbconnect( );
-//  $fbid = get_facebook_cookie( getAppId( ), getAppSecret( ) );
+	$stdb = sticonnect( );
+	$fbid = 0;
+	$fbid = fbconnect( );
+	//  $fbid = get_facebook_cookie( getAppId( ), getAppSecret( ) );
 
-  $doc = new DomDocument( '1.0' );
-  $doc->formatOutput = true;
-  $root = $doc->createElement( 'stlib' );
-  $root = $doc->appendChild( $root );
-  $Chnode = addChildNode( $doc, $root, "test", "test" );
+	$doc = new DomDocument( '1.0' );
+	$doc->formatOutput = true;
+	$root = $doc->createElement( 'stlib' );
+	$root = $doc->appendChild( $root );
+	$Chnode = addChildNode( $doc, $root, "test", "test" );
+	$user_id = NULL;
 
   if( !$fbid ) {
     //if( ( $_SERVER['REQUEST_METHOD'] != 'GET' ) ||
     //    ( !isset( $_REQUEST['genref'] ) ) )
-    {
-      die( myserror( $doc, $root, 0, "efb", 0 ) );
+	$user = JFactory::getUser();
+	if($user && ($user->id > 0)) {
+		$user_id = $user->id;
+//		$info = "efb = " . $user_id;
+//		if(!$user)
+//    	die( myserror( $doc, $root, 0, $info, 0 ) );
+	} else {
+    	die( myserror( $doc, $root, 0, "efb", 0 ) );
     }
   }
 
   if( $_SERVER['REQUEST_METHOD'] == 'GET' ) {
     if( isset( $_REQUEST['ro111'] ) ) {
-	$Chnode = addChildNode( $doc, $root, "ro111", "ro111" );
+		$Chnode = addChildNode( $doc, $root, "ro111", "ro111" );
         $ChKey = 118;
         $ROChKey = 75;
-	$TeamArr = RollOverTeam( $ROChKey, $stdb, $doc, $root, $ChKey );
-	$startdt = '2018-08-12';
-	$sch = RollOverMatch( $ROChKey, $stdb, $doc, $root, $ChKey, $TeamArr, $startdt );
+		$TeamArr = RollOverTeam( $ROChKey, $stdb, $doc, $root, $ChKey );
+		$startdt = '2018-08-12';
+		$sch = RollOverMatch( $ROChKey, $stdb, $doc, $root, $ChKey, $TeamArr, $startdt );
     } else if( isset( $_REQUEST['test'] ) ) {
 	  // Load the details of the Rolled Over championship:
 	  $ROChKey = 98;
@@ -466,45 +502,51 @@ function myserror( $doc, $root, $query, $str, $mysqli ) {
 //	    RollOverFMatch( $ROChKey, $stdb, $doc, $root, $ChKey, $sch );
 	  }
 	} else if( isset( $_REQUEST['genref'] ) ) {
-	  $mref = GenRef( $stdb, $doc, $root );
-	  $Chnode = addChildNode( $doc, $root, "ref", $mref[0] );
-	  $Chnode = addChildNode( $doc, $root, "ref2", $mref[1] );
+		$mref = GenRef( $stdb, $doc, $root );
+		$Chnode = addChildNode( $doc, $root, "ref", $mref[0] );
+		$Chnode = addChildNode( $doc, $root, "ref2", $mref[1] );
 	} else if( isset( $_REQUEST['listchamps'] ) ) {
-	  if( isset( $_REQUEST['default'] ) ) {
-	    $Dnode = addChildNode( $doc, $root, "default" );
-		addAttribute( $doc, $Dnode, "default", $_REQUEST['default'] );
-	  }
-	  $query = "select * from FBAccred " .
-	  			" where AccredRole = 1 " .
-				" and FBID = $fbid";
-	  $acq = $stdb->query( $query );
-//die( "<ql>" . $query . "</ql>"  );
-	  if( !( $acq ) ) {
-	    die( myserror( $doc, $root, $query, "e1", $stdb ) );
-	  }
-	  $Chnode = addChildNode( $doc, $root, "Test" );
-		addAttribute( $doc, $Chnode, "Iter", 0 );
-	  while( $acr = $acq->fetch_assoc( ) ) {
-	    $Chnode = addChildNode( $doc, $root, "Test1" );
-		addAttribute( $doc, $Chnode, "Iter", 0 );
-	    $query = "SELECT DISTINCTROW Sport.SportName, Sport.SportKey, SportingBody.SBAbbrev, SportingBody.SBSportingBodyName, Grade.GradeName, Season.SeasonKey, Season.SeasonName, SportingBody.SBTZ, Championship.Status, Grade.GradeKey " .
-	           " FROM (Season INNER JOIN ((Grade INNER JOIN ((SportingBody INNER JOIN Contest ON SportingBody.SBKey = Contest.SBKey) INNER JOIN Competition ON Contest.ContestKey = Competition.ContestKey) ON Grade.GradeKey = Competition.GradeKey) INNER JOIN Championship ON Competition.CompKey = Championship.CompKey) ON Season.SeasonKey = Championship.SeasonKey) INNER JOIN Sport ON Contest.SportKey = Sport.SportKey " .
-			           " WHERE (((Championship.ChampionshipKey)=" . $acr['AccredKey'] . " ))";
-		if( !( $ChampRecq = $stdb->query( $query ) ) ) {
-		  die( myserror( $doc, $root, $query, "e2", $stdb ) );
+		if( isset( $_REQUEST['default'] ) ) {
+			$Dnode = addChildNode( $doc, $root, "default" );
+			addAttribute( $doc, $Dnode, "default", $_REQUEST['default'] );
 		}
-		if( !( $ChampRec = $ChampRecq->fetch_assoc( ) ) ) {
-		  die( myserror( $doc, $root, $query, "e3: Unknown Championship", 0 ) );
+		if(!$fbid) {
+			$query = "select * from FBAccred " .
+						" where AccredRole = 4 " .
+						" and FBID = $user_id";
+		} else {
+			$query = "select * from FBAccred " .
+						" where AccredRole = 1 " .
+						" and FBID = $fbid";
 		}
-	    $Chnode = addChildNode( $doc, $root, "Championship" );
-		addAttribute( $doc, $Chnode, "ChKey", $acr['AccredKey'] );
-		$Gnode = addChildNode( $doc, $Chnode, "Grade" );
-		addAttribute( $doc, $Gnode, "GradeKey", $ChampRec["GradeKey"] );
-		addChildNode( $doc, $Gnode, "name", $ChampRec["GradeName"] );
-		$Snode = addChildNode( $doc, $Chnode, "Season" );
-		addAttribute( $doc, $Snode, "SeasonKey", $ChampRec["SeasonKey"] );
-		addChildNode( $doc, $Snode, "name", $ChampRec["SeasonName"] );
-	  }
+		$acq = $stdb->query( $query );
+	//die( "<ql>" . $query . "</ql>"  );
+		if( !( $acq ) ) {
+			die( myserror( $doc, $root, $query, "e1", $stdb ) );
+		}
+		$Chnode = addChildNode( $doc, $root, "Test" );
+			addAttribute( $doc, $Chnode, "Iter", 0 );
+		while( $acr = $acq->fetch_assoc( ) ) {
+			$Chnode = addChildNode( $doc, $root, "Test1" );
+			addAttribute( $doc, $Chnode, "Iter", 0 );
+			$query = "SELECT DISTINCTROW Sport.SportName, Sport.SportKey, SportingBody.SBAbbrev, SportingBody.SBSportingBodyName, Grade.GradeName, Season.SeasonKey, Season.SeasonName, SportingBody.SBTZ, Championship.Status, Grade.GradeKey " .
+				" FROM (Season INNER JOIN ((Grade INNER JOIN ((SportingBody INNER JOIN Contest ON SportingBody.SBKey = Contest.SBKey) INNER JOIN Competition ON Contest.ContestKey = Competition.ContestKey) ON Grade.GradeKey = Competition.GradeKey) INNER JOIN Championship ON Competition.CompKey = Championship.CompKey) ON Season.SeasonKey = Championship.SeasonKey) INNER JOIN Sport ON Contest.SportKey = Sport.SportKey " .
+						" WHERE (((Championship.ChampionshipKey)=" . $acr['AccredKey'] . " ))";
+			if( !( $ChampRecq = $stdb->query( $query ) ) ) {
+			die( myserror( $doc, $root, $query, "e2", $stdb ) );
+			}
+			if( !( $ChampRec = $ChampRecq->fetch_assoc( ) ) ) {
+			die( myserror( $doc, $root, $query, "e3: Unknown Championship", 0 ) );
+			}
+			$Chnode = addChildNode( $doc, $root, "Championship" );
+			addAttribute( $doc, $Chnode, "ChKey", $acr['AccredKey'] );
+			$Gnode = addChildNode( $doc, $Chnode, "Grade" );
+			addAttribute( $doc, $Gnode, "GradeKey", $ChampRec["GradeKey"] );
+			addChildNode( $doc, $Gnode, "name", $ChampRec["GradeName"] );
+			$Snode = addChildNode( $doc, $Chnode, "Season" );
+			addAttribute( $doc, $Snode, "SeasonKey", $ChampRec["SeasonKey"] );
+			addChildNode( $doc, $Snode, "name", $ChampRec["SeasonName"] );
+		}
 	} else if( isset( $_REQUEST['isadmin'] ) ) {
           $query = "select * from FBAccred " .
                           " where AccredRole = 1 " .
