@@ -1318,12 +1318,13 @@ function pagehead2( $title, $showjq = true ) {
 }
   
 function create( ) {
-	//$mysqli = sticonnect( );
 	if( !strstr( $_SERVER['SERVER_NAME'], 'thebrasstraps.com' ) ) {
-		return st_home( );
+		return array( '<h2>server</h2>', "", "" );
+		//return st_home( );
 	}
 	if(!( $_SERVER["REQUEST_SCHEME"] == "https" )) {
-		return st_home( );
+		return array( '<h2>https</h2>', "", "" );
+		//return st_home( );
 	}
 
 
@@ -1331,22 +1332,6 @@ function create( ) {
 
     $scriptprefix = "/scoretank";
 
-if(false) {
-	$retval .= '<link type="text/css" href="' . $scriptprefix . '/jqlib/jquery-ui-1.8.11.custom/css/ui-lightness/jquery-ui-1.8.11.custom.css" rel="stylesheet"></script>' . "\n";
-	// note! 27 Aug 2016... this jQuery call is a 2nd one, as /media/jui/js/jquery.min.js is already loaded. Let's aim at cleaning this up in future!
-	// this causes a conflict - nb 1.5.2 doesn't support isNumeric
-	//$retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/jquery-1.5.2.js"></script>' . "\n";
-
-	$retval .= '<script type="text/javascript" src="/media/jui/js/jquery.min.js"></script>' . "\n";
-	$retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/sarissa.js"></script>' . "\n";
-	$retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/sarissa_ieemu_xpath.js"></script>' . "\n";
-	$retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/jquery.xslTransform.js"></script>' . "\n";
-	$retval .= '<script type="text/javascript" src="' . $scriptprefix . '/jqlib/jquery-ui-1.8.11.custom/development-bundle/ui/jquery-ui-1.8.11.custom.js"></script>' . "\n";
-	$retval .= "<script type='text/javascript' src='" . $scriptprefix . "/templates/favouritest/stlib.js'></script>\n";
-	$retval .= '<script type="text/javascript">' . "\n";
-	//$retval .= '$(document).ready( function( ) { } );';
-	$retval .= '</script>' . "\n";
-}
 	$retval .= "<span>This is a test system for Admin Data Entry. It uses Joomla authentication &amp; ScoreTank authorisation. Please log in above, to be able to administer competitions.</span><p/>";
 	$retval .= "<span id='adminpage'></span>";
 	$retval .= "<div id='matchDialog' title='Match'></div>";
@@ -1473,6 +1458,9 @@ function renderST( $inst ) {
   if( !( preg_match('/^\d+$/', $ArticleID ) ) || ( !$ArticleID ) ) {
 	return( htmlspecialchars( "Error(r1)" ) );
   }
+  //return( htmlspecialchars( "Error(r12- " . $ArticleID . ")" ) );
+  //return array("create" . $ArticleID, "", "");
+
   if( $ArticleID == 9 ) {
     return( st_home( ) );
   }

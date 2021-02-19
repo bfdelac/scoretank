@@ -35,13 +35,14 @@
 	include "fb/stpage.php";
 	include "fb/facebook.php";
 
-function RollOverCh( $ROChKey, $season, $fbid, $stdb, $doc, $root, $roteams ) {
+//function RollOverCh( $ROChKey, $season, $fbid, $stdb, $doc, $root, $roteams ) {
+function RollOverCh( $ROChKey, $season, $user_id, $stdb, $doc, $root, $roteams ) {
   $query = "SELECT DISTINCTROW Sport.SportName, Sport.SportKey, SportingBody.SBAbbrev, SportingBody.SBSportingBodyName, Grade.GradeName, Season.SeasonKey, Season.SeasonName, SportingBody.SBTZ, Championship.Status, Grade.GradeKey, Contest.ContestKey, ChampData.DataKey, NumFinalists, Competition.CompKey, Display " .
 	           " FROM FBAccred, ChampData, (Season INNER JOIN ((Grade INNER JOIN ((SportingBody INNER JOIN Contest ON SportingBody.SBKey = Contest.SBKey) INNER JOIN Competition ON Contest.ContestKey = Competition.ContestKey) ON Grade.GradeKey = Competition.GradeKey) INNER JOIN Championship ON Competition.CompKey = Championship.CompKey) ON Season.SeasonKey = Championship.SeasonKey) INNER JOIN Sport ON Contest.SportKey = Sport.SportKey " .
 	           " WHERE (((Championship.ChampionshipKey)=" . $ROChKey . " )) " .
 			   " AND Championship.DataKey = ChampData.DataKey " .
-			   " AND FBAccred.FBID = " . $fbid .
-			   " AND AccredRole = 1 " .
+			   " AND FBAccred.FBID = " . $user_id .
+			   " AND AccredRole = 4 " .	
 			   " AND AccredKey = Championship.ChampionshipKey ";
 
   if( !( $ChampRecq = $stdb->query( $query ) ) ) {
@@ -104,7 +105,7 @@ function RollOverCh( $ROChKey, $season, $fbid, $stdb, $doc, $root, $roteams ) {
 
   $initAuth = GenRef( $stdb, $doc, $root );
   $query = "insert into FBAccred ( FBID, AccredRole, AccredKey, InitAuth, Display ) values " .
-  			" ( $fbid, 1, $ChKey, $initAuth[0], " . $ChampRec['Display'] . " )";
+  			" ( $user_id, 4, $ChKey, NULL, NULL )";
   if( !( $stmt = $stdb->query( $query ) ) ) {
 	die( myserror( $doc, $root, $query, "e16", $stdb ) );
   }
@@ -440,7 +441,7 @@ function myserror( $doc, $root, $query, $str, $mysqli ) {
 
 	$stdb = sticonnect( );
 	$fbid = 0;
-	$fbid = fbconnect( );
+	//$fbid = fbconnect( );
 	//  $fbid = get_facebook_cookie( getAppId( ), getAppSecret( ) );
 
 	$doc = new DomDocument( '1.0' );
@@ -565,6 +566,10 @@ function myserror( $doc, $root, $query, $str, $mysqli ) {
   } else { 	// POST
 	if( isset( $_REQUEST['function'] ) ) {
 	  if( !strcmp( $_REQUEST['function'], "RollOver" ) ) {
+
+		if(is_null($user_id)) {
+			die( myserror( $doc, $root, "", "not authorised(2)", "" ) );
+		}
 	    // Load the details of the Rolled Over championship:
 		$ROChKey = $_REQUEST['rochampkey'];
 		$season = $_REQUEST['season'];
@@ -582,7 +587,7 @@ function myserror( $doc, $root, $query, $str, $mysqli ) {
 		$ChKey = -1;
 		// 0. don't need to insert sporting body, copy from existing
 		// 1. championship
-		$ChKey = RollOverCh( $ROChKey, $season, $fbid, $stdb, $doc, $root, $roteams );
+		$ChKey = RollOverCh( $ROChKey, $season, $user_id, $stdb, $doc, $root, $roteams );
 		addAttribute( $doc, $rnode, "ChKey", $ChKey );
 		// 2. teams
 		if( $roteams ) {

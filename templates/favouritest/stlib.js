@@ -169,12 +169,12 @@ function initialiseChampDialog() {
 		height: 400,
 		buttons: {
 			"Ok": function( ) {
-				var SeasonName = jQuery.trim( jQuery( '#NewSeasonName' ).val( ) );
+				var SeasonName = jQuery.trim( $( '#NewSeasonName' ).val( ) );
 				if( SeasonName.length <= 0 ) {
 					window.alert( "Please enter a name for the new season" );
 					return;
 				}
-				var StartDt = $akey( '#SStartDt' ).val( );
+				var StartDt = $( '#SStartDt' ).val( );
 				if( StartDt.length > 0 ) {
 					StartDt = jQuery.datepicker.formatDate( "yy-mm-dd", $( "#SStartDt" ).datepicker( 'getDate' ) );
 				}
@@ -194,8 +194,10 @@ function initialiseChampDialog() {
 							defch = def[0].getAttribute( "ChKey" );
 						}
 						$( '#champDialog' ).dialog( 'close' );
-						$( '#adminpage' ).getTransform( $("#scriptprefix").html() + "/xstlib.xsl", $("#scriptprefix").html() + "/xstlib.php?listchamps=1&default=" + defch );
-					//			$( "#ChampFixture" ).getTransform( "/xfixture.xsl", "/xteam.php?editmatch=1&fixt=" + $( '#ChampSel' ).val( ) );
+
+						loadPage(defch);
+						//$( '#adminpage' ).getTransform( $("#scriptprefix").html() + "/xstlib.xsl", $("#scriptprefix").html() + "/xstlib.php?listchamps=1&default=" + defch );
+						//			$( "#ChampFixture" ).getTransform( "/xfixture.xsl", "/xteam.php?editmatch=1&fixt=" + $( '#ChampSel' ).val( ) );
 						changeChamp( $( '#ChampSel' ) );
 					},
 					"xml"
@@ -435,18 +437,6 @@ function EditMatch( roundnum, matchnum, hkey, akey, vkey, sched, hd, hdr, ad, ad
 
 function rollOver( ) {
   jQuery( "#champDialog" ).dialog( 'open' );
-
-//  $.post( "/xstlib.php", {
-//	  function: "RollOver",
-//	  rochampkey: $( '#ChampSel' ).val( ),
-//	  season: "Spring 2013",
-//	  roteams: 0,
-//	  startdt: '',
-//	},
-//	function( xData ) {
-//	},
-//	"xml"
-//  );
 }
 
 function SendMatchResLibX( ) {
@@ -475,14 +465,21 @@ window.XXfbAsyncInit = function( ) {
 function setupInlineMatch( xData ) {
 	console.log("sIF1");
 	var sp = $("#scriptprefix").html();
-	$( "#dlgHomeTd" ).getTransform( sp + "/xteam.xsl", xData );
-	$( "#dlgAwayTd" ).getTransform( sp + "/xteam.xsl", xData );
-	$( "#dlgAwayTd .dlgTeamSelSpan" ).find( "select" ).append( $( '<option>', { value: 0, text: 'Bye' } ) );
-	$( "#dlgVenueTd" ).getTransform( sp + "/xvenue.xsl", xData );
-	$( "#hteam" ).getTransform( sp + "/xteam.xsl", xData );
-	$( "#ateam" ).getTransform( sp + "/xteam.xsl", xData );
-	$( "#ateam select" ).append( $( '<option>', { value: 0, text: 'Bye' } ) );
-	$( "#venue" ).getTransform( sp + "/xvenue.xsl", xData );
+
+	$.get(sp + "/xteam.xsl", function(teamXsl) {
+		$( "#dlgHomeTd" ).getTransform(teamXsl, xData);
+		$( "#dlgAwayTd" ).getTransform(teamXsl, xData);
+		$( "#dlgAwayTd .dlgTeamSelSpan" ).find( "select" ).append( $( '<option>', { value: 0, text: 'Bye' } ) );
+
+		$.get(sp + "/xvenue.xsl", function(venueXsl) {
+			$( "#dlgVenueTd" ).getTransform(venueXsl, xData);
+			$( "#venue" ).getTransform(venueXsl, xData);
+		});
+		$( "#hteam" ).getTransform(teamXsl, xData);
+		$( "#ateam" ).getTransform(teamXsl, xData);
+		$( "#ateam select" ).append( $( '<option>', { value: 0, text: 'Bye' } ) );
+	});
+
 	$( "#matchdate" ).datepicker( {
 		dateFormat: "D, d M yy"
 	} );
@@ -512,12 +509,14 @@ function initFixt( xdata ) {
 		} );
 }
 
-function loadPage( ) {
+function loadPage(defch = -1) {
 	$( '#adminpage' ).text( "Now Loading..." );
 	$.get($("#scriptprefix").html() + "/xstlib.xsl", function(compsxsl) {
-			console.log('got xsl');
-			$.get($("#scriptprefix").html() + "/xstlib.php?listchamps=1", function(compsxml) {
-					console.log('got xml');
+			var defstr = "";
+			if(defch > 0) {
+				defstr = "&default=" + defch;
+			}
+			$.get($("#scriptprefix").html() + "/xstlib.php?listchamps=1" + defstr, function(compsxml) {
 					$('#adminpage').getTransform(compsxsl, compsxml);
 			});
 		}, "xml");
