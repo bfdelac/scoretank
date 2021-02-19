@@ -614,7 +614,8 @@ function myserror( $doc, $root, $query, $str, $mysqli ) {
 		$hdr = $_REQUEST['hdr'];
 		$ad = $_REQUEST['ad'];
 		$adr = $_REQUEST['adr'];
-	    $query = "select * from FBAccred where FBID = $fbid and AccredRole = 1 and AccredKey = $chkey";
+	    //$query = "select * from FBAccred where FBID = $fbid and AccredRole = 1 and AccredKey = $chkey";
+		$query = "select * from FBAccred where FBID = $user_id and AccredRole = 4 and AccredKey = $chkey";
 		if( !( $AccredRecq = $stdb->query( $query ) ) ) {
 		  die( myserror( $doc, $root, $query, "mr2a", $stdb ) );
 		}

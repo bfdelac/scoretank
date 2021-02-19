@@ -22,9 +22,7 @@ function initialiseMatchDialog( ) {
 		height: 350,
 		buttons: {
 			'Ok': function( ) {
-				console.log("matchDialog Ok fired");
-if(false) {
-				if(!jQuery('#matchDialog').dialog('isOpen')) {
+				if(!$('#matchDialog').dialog('isOpen')) {
 					return;
 				}
 		
@@ -34,38 +32,38 @@ if(false) {
 				var hdr = 0;
 				var ad = '';
 				var adr = 0;
-				var isfinal = ( jQuery( "#dlgHomeTd .dlgTeamSelSpan" ).css( "display" ) == 'none' );
+				var isfinal = ( $( "#dlgHomeTd .dlgTeamSelSpan" ).css( "display" ) == 'none' );
 				if( isfinal ) {
-				  hd = jQuery( '#dlgHomeTd .dlgTeamDerivSelSpan select' ).val( );
+				  hd = $( '#dlgHomeTd .dlgTeamDerivSelSpan select' ).val( );
 				  if( hd == 'F' ) {
-					hdr = jQuery( '#dlgHomeTd .dlgTeamDerivSelRank .LadderPosSel' ).val( );
+					hdr = $( '#dlgHomeTd .dlgTeamDerivSelRank .LadderPosSel' ).val( );
 				  } else {
-					hdr = jQuery( '#dlgHomeTd .dlgTeamDerivSelRank .WinLose' ).val( );
+					hdr = $( '#dlgHomeTd .dlgTeamDerivSelRank .WinLose' ).val( );
 				  }
-				  ad = jQuery( '#dlgAwayTd .dlgTeamDerivSelSpan select' ).val( );
+				  ad = $( '#dlgAwayTd .dlgTeamDerivSelSpan select' ).val( );
 				  if( ad == 'F' ) {
-					adr = jQuery( '#dlgAwayTd .dlgTeamDerivSelRank .LadderPosSel' ).val( );
+					adr = $( '#dlgAwayTd .dlgTeamDerivSelRank .LadderPosSel' ).val( );
 				  } else {
-					adr = jQuery( '#dlgAwayTd .dlgTeamDerivSelRank .WinLose' ).val( );
+					adr = $( '#dlgAwayTd .dlgTeamDerivSelRank .WinLose' ).val( );
 				  }
 				  if( hd == '' ) {
 					window.alert( "Please select a Home formula" );
-					jQuery( '#dlgHomeTd .dlgTeamDerivSelSpan select' ).focus( );
+					$( '#dlgHomeTd .dlgTeamDerivSelSpan select' ).focus( );
 					return;
 				  }
 				  if( ad == '' ) {
 					window.alert( "Please select an Away formula" );
-					jQuery( '#dlgAwayTd .dlgTeamDerivSelSpan select' ).focus( );
+					$( '#dlgAwayTd .dlgTeamDerivSelSpan select' ).focus( );
 					return;
 				  }
 				  if( ( hdr == '' ) || ( hdr < 0 ) ) {
 					window.alert( "Please select a Home formula team source" );
-					jQuery( '#dlgHomeTd .dlgTeamDerivSelRank select' ).focus( );
+					$( '#dlgHomeTd .dlgTeamDerivSelRank select' ).focus( );
 					return;
 				  }
 				  if( ( adr == '' ) || ( adr < 0 ) ) {
 					window.alert( "Please select an Away formula team source" );
-					jQuery( '#dlgAwayTd .dlgTeamDerivSelRank select' ).focus( );
+					$( '#dlgAwayTd .dlgTeamDerivSelRank select' ).focus( );
 					return;
 				  }
 				  if( ( hd == ad ) && ( hdr == adr ) ) {
@@ -74,7 +72,7 @@ if(false) {
 					return;
 				  }
 				} else {
-				  hkey = jQuery( '#dlgHomeTd .dlgTeamSelSpan select' ).val( );
+				  hkey = $( '#dlgHomeTd .dlgTeamSelSpan select' ).val( );
 				  akey = jQuery( '#dlgAwayTd .dlgTeamSelSpan select' ).val( );
 				  if( hkey <= 0 ) {
 					window.alert( "Please select a Home team" );
@@ -96,26 +94,25 @@ if(false) {
 				if( ( !isfinal ) && ( akey == 0 ) ) {
 				  akey = -1; //BYE special values
 				} else {
-				  $venue = jQuery( "#dlgVenueTd :selected" ).val( );
+				  $venue = $( "#dlgVenueTd :selected" ).val( );
 				  if( $venue == "" ) {
 					window.alert( "Please select the venue" );
-					jQuery( '#dlgVenueTd select' ).focus( );
+					$( '#dlgVenueTd select' ).focus( );
 					return;
 				  }
 				}
 		
-				if( jQuery( "#dlgMatchdate" ).val( ) == "" ) {
+				if( $( "#dlgMatchdate" ).val( ) == "" ) {
 				  window.alert( "Please select the match date" );
-				  jQuery( "#dlgMatchdate" ).datepicker( "show" );
+				  $( "#dlgMatchdate" ).datepicker( "show" );
 				}
-				if( jQuery( "#dlgMatchtime" ) == "" ) {
+				if( $( "#dlgMatchtime" ) == "" ) {
 				  window.alert( "Please select the match time" );
 				  return;
 				}
-				var sched = jQuery.datepicker.formatDate( "yy-mm-dd", jQuery( "#dlgMatchdate" ).datepicker( 'getDate' ) ) + " " + jQuery( "#dlgMatchtime" ).val( );
+				var sched = $.datepicker.formatDate( "yy-mm-dd", $( "#dlgMatchdate" ).datepicker( 'getDate' ) ) + " " + $( "#dlgMatchtime" ).val( );
 		
-		//window.alert( "Posting" );
-				jQuery.post( jQuery("#scriptprefix").html() + "/xstlib.php", {
+				$.post( $("#scriptprefix").html() + "/xstlib.php", {
 					function: "UpdateMatch",
 					hkey: hkey,
 					akey: akey,
@@ -123,28 +120,30 @@ if(false) {
 					Sched: sched,
 					mnum: document.matchnum,
 					rnum: document.roundnum,
-					chkey: jQuery( '#ChampSel' ).val( ),
+					chkey: $( '#ChampSel' ).val( ),
 					hd: hd,
 					hdr: hdr,
 					ad: ad,
 					adr: adr
 				  },
 				  function( xData ) {
-						jQuery( '#matchDialog' ).dialog( 'close' );
-					jQuery( "#ChampFixture" ).getTransform( jQuery("#scriptprefix").html() + "/xfixture.xsl",
-			jQuery("#scriptprefix").html() + "/xteam.php?editmatch=1&fixt=" + jQuery( '#ChampSel' ).val( ) );
-					jQuery.get( jQuery("#scriptprefix").html() + "/xteam.php?showvenues=1&champ=" + jQuery( '#ChampSel' ).val( ),
-					  function( xData ) {
-					setupInlineMatch( xData );
-					  } );
+						$( '#matchDialog' ).dialog( 'close' );
+						$.get($("#scriptprefix").html() + "/xfixture.xsl", function(fixtXsl) {
+							$.get($("#scriptprefix").html() + "/xteam.php?editmatch=1&fixt=" + $( '#ChampSel' ).val( ), function(fixtXml) {
+								$( "#ChampFixture" ).getTransform(fixtXsl, fixtXml);
+								$.get( $("#scriptprefix").html() + "/xteam.php?showvenues=1&champ=" + $( '#ChampSel' ).val( ),
+									function( xData ) {
+										setupInlineMatch( xData );
+									} );
+								});
+						});
 				  },
 				  "xml"
 				);
-}
 			},
 			'Cancel': function( ) {
 				console.log("matchDialog Close fired");
-				jQuery( '#matchDialog' ).dialog( 'close' );
+				$( '#matchDialog' ).dialog( 'close' );
 				console.log("matchDialog Close finished");
 			}
 		}
@@ -154,7 +153,7 @@ if(false) {
 function initialiseChampDialog() {
 	$( '#champDialog' ).html(
 		"<table border='0'>" +
-			"<tr><td></td></tr>" +
+			"<tr><td></td></tr>" + 
 			"<tr><td width='10%'></td><td>New&nbsp;season&nbsp;name:</td><td id='seasonTd' style='text-align:left;'><input type='text' maxlength='80' style='width:20em;' id='NewSeasonName'></input></td></tr>" +
 			"<tr><td></td><td>Roll over teams?</td><td id='seasonTd' style='text-align:left;'><input type='checkbox' id='ROteams'></input></td></tr>" +
 			"<tr><td></td><td>Season start date:<br/>(only if rolling over matches)</td><td id='SeasonStartTd' style='text-align:left;'><input type='text' id='SStartDt'></input></td></tr>" +
@@ -463,7 +462,6 @@ window.XXfbAsyncInit = function( ) {
 }
 
 function setupInlineMatch( xData ) {
-	console.log("sIF1");
 	var sp = $("#scriptprefix").html();
 
 	$.get(sp + "/xteam.xsl", function(teamXsl) {
@@ -476,6 +474,7 @@ function setupInlineMatch( xData ) {
 			$( "#venue" ).getTransform(venueXsl, xData);
 		});
 		$( "#hteam" ).getTransform(teamXsl, xData);
+		console.log("hteam = " + $("#hteam").html());
 		$( "#ateam" ).getTransform(teamXsl, xData);
 		$( "#ateam select" ).append( $( '<option>', { value: 0, text: 'Bye' } ) );
 	});
@@ -493,7 +492,6 @@ function setupInlineMatch( xData ) {
 		$( "#roundnum" ).val( 1 );
 		$( "#matchnum" ).val( 1 );
 	}
-	console.log("sIF9");
 }
 
 function initFixt( xdata ) {
